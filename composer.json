@@ -1,0 +1,23 @@
+{
+    "name": "mradang/laravel-fly",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "mradang",
+            "email": "mradang@163.com"
+        }
+    ],
+    "require": {
+        "firebase/php-jwt": "^5.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "mradang\\LaravelFly\\": "src"
+        },
+        "files": [
+            "src/app/helpers.php",
+            "src/app/Exception.php"
+        ]
+    }
+}

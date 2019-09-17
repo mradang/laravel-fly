@@ -1,0 +1,6 @@
+HOST=example.example.com
+PORT=22
+DIR=publish.dir
+NAME=project name
+DBNAME=database name
+MYSQL_FRIEWALL=true|false
