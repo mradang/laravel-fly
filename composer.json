@@ -19,5 +19,12 @@
             "src/app/helpers.php",
             "src/app/Exception.php"
         ]
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "mradang\\LaravelFly\\LaravelFlyServiceProvider"
+            ]
+        }
     }
 }
