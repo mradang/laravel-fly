@@ -1,5 +1,5 @@
 #!/bin/bash
 
-log=./storage/logs/lumen.log
+log=./storage/logs/laravel.log
 echo '' > $log
 tail -f $log

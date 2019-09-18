@@ -19,8 +19,7 @@ class CreateTableLogs extends Migration
             $table->string('username'); // 用户名
             $table->string('ip'); // IP
             $table->text('log_msg'); // 日志信息
-            $table->dateTime('updated_at');
-            $table->dateTime('created_at');
+            $table->timestamps();
         });
     }
 

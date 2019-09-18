@@ -4,10 +4,25 @@ namespace mradang\LaravelFly;
 
 use Illuminate\Support\ServiceProvider;
 
-class LaravelFlyServiceProvider extends ServiceProvider {
+class LaravelFlyServiceProvider extends ServiceProvider
+{
 
-    public function boot() {
-        $this->configure();
+    public function boot()
+    {
+        if ($this->app->runningInConsole()) {
+            // 配置文件
+            $this->publishes([
+                \dirname(__DIR__).'/config/fly.php' => config_path('fly.php'),
+            ], 'config');
+            // 快捷脚本
+            $this->publishes([
+                \dirname(__DIR__).'/publishes/shortcut/' => base_path(),
+            ], 'shortcut');
+            // 运维脚本
+            $this->publishes([
+                \dirname(__DIR__).'/publishes/deploy/' => base_path('deploy'),
+            ], 'deploy');
+        }
 
         $this->registerSqlLog();
         $this->registerRoutes();
@@ -18,21 +33,22 @@ class LaravelFlyServiceProvider extends ServiceProvider {
         $this->registerTrustedProxiesMiddleware();
     }
 
-    protected function configure() {
-        $this->app->configure('fly');
-
+    public function register()
+    {
         $this->mergeConfigFrom(
-            __DIR__.'/../config/fly.php', 'fly'
+            \dirname(__DIR__).'/config/fly.php', 'fly'
         );
     }
 
-    protected function registerSqlLog() {
+    protected function registerSqlLog()
+    {
         if (config('fly.sql_log')) {
             Services\QueryLogService::log();
         }
     }
 
-    protected function registerRoutes() {
+    protected function registerRoutes()
+    {
         \Illuminate\Support\Facades\Route::group([
             'prefix' => config('fly.uri'),
             'namespace' => 'mradang\LaravelFly\Controllers',
@@ -41,7 +57,8 @@ class LaravelFlyServiceProvider extends ServiceProvider {
         });
     }
 
-    protected function registerCommands() {
+    protected function registerCommands()
+    {
         if ($this->app->runningInConsole()) {
             $this->commands([
                 Console\MakeRouteDescFileCommand::class,
@@ -52,31 +69,33 @@ class LaravelFlyServiceProvider extends ServiceProvider {
         }
     }
 
-    protected function registerMigrations() {
+    protected function registerMigrations()
+    {
         if ($this->app->runningInConsole()) {
-            $this->loadMigrationsFrom(__DIR__.'/migrations');
+            $this->loadMigrationsFrom(\dirname(__DIR__).'/migrations/');
         }
     }
 
-    protected function registerGuard() {
+    protected function registerGuard()
+    {
         $this->app['auth']->viaRequest('api', function ($request) {
             $user = Services\UserService::checkToken($request);
             return $user ?: null;
         });
     }
 
-    protected function registerRouteMiddleware() {
-        $this->app->middleware([
+    protected function registerRouteMiddleware()
+    {
+        $this->app['router']->middleware([
             Middleware\CorsMiddleware::class,
         ]);
-        $this->app->routeMiddleware([
-            'auth.basic' => Middleware\Authenticate::class,
-            'auth' => Middleware\Authorization::class,
-        ]);
+        $this->app['router']->aliasMiddleware('auth.basic', Middleware\Authenticate::class);
+        $this->app['router']->aliasMiddleware('auth', Middleware\Authorization::class);
     }
 
-    protected function registerTrustedProxiesMiddleware() {
-        $this->app->middleware([
+    protected function registerTrustedProxiesMiddleware()
+    {
+        $this->app['router']->middleware([
             Middleware\TrustedProxiesMiddleware::class,
         ]);
     }

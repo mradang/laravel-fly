@@ -15,8 +15,8 @@ class CreateTableRbacAccess extends Migration
     {
         // 角色权限关联表
         Schema::create('rbac_access', function (Blueprint $table) {
-            $table->integer('role_id')->unsigned(); // 角色id
-            $table->integer('node_id')->unsigned(); // 功能节点id
+            $table->unsignedInteger('role_id'); // 角色id
+            $table->unsignedInteger('node_id'); // 功能节点id
 
             $table->unique(['role_id', 'node_id']); // 唯一索引
         });

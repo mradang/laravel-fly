@@ -15,8 +15,8 @@ class CreateTableRbacRoleUser extends Migration
     {
         // 角色用户关联表
         Schema::create('rbac_role_user', function (Blueprint $table) {
-            $table->integer('role_id')->unsigned(); // 角色id
-            $table->integer('user_id')->unsigned(); // 用户id
+            $table->unsignedInteger('role_id'); // 角色id
+            $table->unsignedInteger('user_id'); // 用户id
 
             $table->unique(['role_id', 'user_id']); // 唯一索引
         });

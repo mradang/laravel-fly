@@ -2,9 +2,11 @@
 
 namespace App\Services;
 
-class Exception extends \Exception {
+class Exception extends \Exception
+{
 
-    public function __construct($msg='') {
+    public function __construct($msg = '')
+    {
         parent::__construct($msg);
     }
 
