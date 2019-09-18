@@ -57,18 +57,12 @@ class RbacRoleController extends Controller {
         RbacRoleService::syncNodes($request->input('role_id'), $nodes);
     }
 
-    // 保存排序值，data中的项目需要2个属性：id, sort
     public function saveSort(Request $request) {
-        $data = json_decode($request->getContent(), true);
-        $sorts = [];
-        foreach ($data as $item) {
-            $validator = validator($item, [
-                'id' => 'required|integer|min:1',
-                'sort' => 'required|integer',
-            ]);
-            $sorts[] = $validator->validate();
-        }
-        RbacRoleService::saveSort($sorts);
+        $validatedData = $this->validate($request, [
+            '*.id' => 'required|integer',
+            '*.sort' => 'required|integer',
+        ]);
+        RbacRoleService::saveSort($validatedData['*']);
     }
 
 }
