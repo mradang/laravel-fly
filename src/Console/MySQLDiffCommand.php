@@ -3,7 +3,7 @@
 namespace mradang\LaravelFly\Console;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
+// use Illuminate\Support\Facades\DB;
 
 class MySQLDiffCommand extends Command {
 
@@ -54,7 +54,7 @@ class MySQLDiffCommand extends Command {
 
     private function diff($arr1, $arr2, array $pri) {
         $key1 = array_map(function($value) use ($pri) {
-            return implode(',', array_only($value, $pri));
+            return implode(',', \Arr::only($value, $pri));
         }, $arr1);
         $value1 = array_map(function($value) {
             return implode(',', $value);
@@ -62,7 +62,7 @@ class MySQLDiffCommand extends Command {
         $arr1 = array_combine($key1, $value1);
 
         $key2 = array_map(function($value) use ($pri) {
-            return implode(',', array_only($value, $pri));
+            return implode(',', \Arr::only($value, $pri));
         }, $arr2);
         $value2 = array_map(function($value) {
             return implode(',', $value);
@@ -73,8 +73,8 @@ class MySQLDiffCommand extends Command {
         $diff = [];
         foreach ($keys as $key) {
             $value = [
-                array_get($arr1, $key),
-                array_get($arr2, $key),
+                \Arr::get($arr1, $key),
+                \Arr::get($arr2, $key),
             ];
             if ($value[0] !== $value[1]) {
                 $diff[] = $value;
