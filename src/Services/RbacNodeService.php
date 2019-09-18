@@ -20,12 +20,11 @@ class RbacNodeService {
 
     public static function publicNodes() {
         $nodes = [];
-        $routes = app()->router->getRoutes();
-        foreach ($routes as $key => $value) {
-            $middleware = array_get($value, 'action.middleware', []);
+        $routes = \Route::getRoutes();
+        foreach ($routes as $route) {
             // 不需要授权
-            if (!in_array('auth', $middleware)) {
-                $nodes[] = $value['uri'];
+            if (!in_array('auth', $route->middleware())) {
+                $nodes[] = \Str::start($route->uri, '/');
             }
         }
         return $nodes;
@@ -33,12 +32,11 @@ class RbacNodeService {
 
     public static function AuthNodes() {
         $nodes = [];
-        $routes = app()->router->getRoutes();
-        foreach ($routes as $key => $value) {
-            $middleware = array_get($value, 'action.middleware', []);
+        $routes = \Route::getRoutes();
+        foreach ($routes as $route) {
             // 需要授权
-            if (in_array('auth', $middleware)) {
-                $nodes[] = $value['uri'];
+            if (in_array('auth', $route->middleware())) {
+                $nodes[] = \Str::start($route->uri, '/');
             }
         }
         return $nodes;
@@ -64,12 +62,11 @@ class RbacNodeService {
     public static function makeRouteDescFile() {
         // 读取节点数据
         $nodes = [];
-        $routes = app()->router->getRoutes();
-        foreach ($routes as $key => $value) {
-            if (array_key_exists('middleware', $value['action'])) {
-                if (in_array('auth', $value['action']['middleware'])) {
-                    $nodes[] = $value['uri'];
-                }
+        $routes = \Route::getRoutes();
+
+        foreach ($routes as $route) {
+            if (in_array('auth', $route->middleware())) {
+                $nodes[] = \Str::start($route->uri, '/');
             }
         }
 
@@ -83,8 +80,8 @@ class RbacNodeService {
             if (!array_key_exists($module, $new)) {
                 $new[$module] = [];
             }
-            $function = str_after($node, "/$module/");
-            $new[$module][$function] = array_get($desc, "$module.$function", '');
+            $function = \Str::after($node, "/$module/");
+            $new[$module][$function] = \Arr::get($desc, "$module.$function", '');
         }
 
         // 排序
@@ -106,9 +103,9 @@ class RbacNodeService {
         $ids = [];
         foreach ($nodes as $node) {
             list(, $module) = explode('/', $node);
-            $function = str_after($node, "/$module/");
+            $function = \Str::after($node, "/$module/");
             $rbac_node = RbacNode::firstOrNew(['name' => $node]);
-            $rbac_node->description = array_get($desc, "$module.$function", '');
+            $rbac_node->description = \Arr::get($desc, "$module.$function", '');
             $rbac_node->save();
             $ids[] = $rbac_node->id;
         }

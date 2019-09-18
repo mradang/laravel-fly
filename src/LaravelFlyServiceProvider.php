@@ -49,12 +49,7 @@ class LaravelFlyServiceProvider extends ServiceProvider
 
     protected function registerRoutes()
     {
-        \Illuminate\Support\Facades\Route::group([
-            'prefix' => config('fly.uri'),
-            'namespace' => 'mradang\LaravelFly\Controllers',
-        ], function () {
-            $this->loadRoutesFrom(__DIR__.'/routes/web.php');
-        });
+        $this->loadRoutesFrom(__DIR__.'/routes/routes.php');
     }
 
     protected function registerCommands()
@@ -62,7 +57,6 @@ class LaravelFlyServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 Console\MakeRouteDescFileCommand::class,
-                Console\PublishCommand::class,
                 Console\RefreshRbacNodeCommand::class,
                 Console\MySQLDiffCommand::class,
             ]);

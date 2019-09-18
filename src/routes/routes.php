@@ -1,16 +1,15 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-
 Route::group([
-    'prefix' => 'rbac',
+    'prefix' => config('fly.uri') . '/rbac',
+    'namespace' => 'mradang\LaravelFly\Controllers',
     'middleware' => ['auth'],
 ], function () {
-    Route::get('allNodes', 'RbacNodeController@all');
-    Route::get('allNodesWithRole', 'RbacNodeController@allWithRole');
-    Route::get('refreshNodes', 'RbacNodeController@refresh');
+    Route::post('allNodes', 'RbacNodeController@all');
+    Route::post('allNodesWithRole', 'RbacNodeController@allWithRole');
+    Route::post('refreshNodes', 'RbacNodeController@refresh');
 
-    Route::get('allRoles', 'RbacRoleController@all');
+    Route::post('allRoles', 'RbacRoleController@all');
     Route::post('createRole', 'RbacRoleController@create');
     Route::post('findRoleWithNodes', 'RbacRoleController@findWithNodes');
     Route::post('syncRoleNodes', 'RbacRoleController@syncNodes');
@@ -20,7 +19,8 @@ Route::group([
 });
 
 Route::group([
-    'prefix' => 'log',
+    'prefix' => config('fly.uri') . '/log',
+    'namespace' => 'mradang\LaravelFly\Controllers',
     'middleware' => ['auth'],
 ], function () {
     Route::post('lists', 'LogController@lists');

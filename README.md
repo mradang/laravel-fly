@@ -8,8 +8,9 @@ $ composer require mradang/laravel-fly -vvv
 
 This step is optional
 
-```php
+```shell
 $ php artisan vendor:publish --provider="mradang\\LaravelFly\\LaravelFlyServiceProvider"
+$ php artisan queue:table
 ```
 
 ## Usage
