@@ -3,6 +3,7 @@
 namespace mradang\LaravelFly;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Contracts\Http\Kernel;
 
 class LaravelFlyServiceProvider extends ServiceProvider
 {
@@ -80,9 +81,9 @@ class LaravelFlyServiceProvider extends ServiceProvider
 
     protected function registerRouteMiddleware()
     {
-        $this->app['router']->middleware([
-            Middleware\CorsMiddleware::class,
-        ]);
+        $kernel = $this->app->make(Kernel::class);
+        $kernel->prependMiddleware(Middleware\CorsMiddleware::class);
+
         $this->app['router']->aliasMiddleware('auth.basic', Middleware\Authenticate::class);
         $this->app['router']->aliasMiddleware('auth', Middleware\Authorization::class);
     }
