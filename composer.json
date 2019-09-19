@@ -1,5 +1,6 @@
 {
     "name": "mradang/laravel-fly",
+    "description": "laravel-fly",
     "type": "library",
     "license": "MIT",
     "authors": [
