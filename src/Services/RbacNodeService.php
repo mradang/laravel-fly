@@ -76,11 +76,11 @@ class RbacNodeService {
         // 重新生成功能说明文件
         $new = [];
         foreach ($nodes as $node) {
-            list(, $module) = explode('/', $node);
+            list(, , $module) = explode('/', $node);
             if (!array_key_exists($module, $new)) {
                 $new[$module] = [];
             }
-            $function = \Str::after($node, "/$module/");
+            $function = \Str::after($node, "/api/$module/");
             $new[$module][$function] = \Arr::get($desc, "$module.$function", '');
         }
 
@@ -102,8 +102,8 @@ class RbacNodeService {
         $nodes = self::AuthNodes();
         $ids = [];
         foreach ($nodes as $node) {
-            list(, $module) = explode('/', $node);
-            $function = \Str::after($node, "/$module/");
+            list(, , $module) = explode('/', $node);
+            $function = \Str::after($node, "/api/$module/");
             $rbac_node = RbacNode::firstOrNew(['name' => $node]);
             $rbac_node->description = \Arr::get($desc, "$module.$function", '');
             $rbac_node->save();
