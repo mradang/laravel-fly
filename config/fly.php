@@ -40,7 +40,7 @@ return [
     | 指定用户模型类，实现 RBAC 的关键配置
     |
     */
-    'user_model' => env('FLY_USER_MODEL', \App\User::class),
+    'user_model' => env('FLY_USER_MODEL', \App\Models\User::class),
 
     /*
     |--------------------------------------------------------------------------
