@@ -20,28 +20,28 @@ class RbacRoleController extends Controller {
     }
 
     public function findWithNodes(Request $request) {
-        $this->validate($request, [
+        $request->validate([
             'id' => 'required|integer|min:1',
         ]);
         return RbacRoleService::findWithNodes($request->input('id'));
     }
 
     public function delete(Request $request) {
-        $this->validate($request, [
+        $request->validate([
             'id' => 'required|integer|min:1',
         ]);
         return RbacRoleService::delete($request->input('id'));
     }
 
     public function create(Request $request) {
-        $this->validate($request, [
+        $request->validate([
             'name' => 'required|unique:rbac_role',
         ], $this->messages);
         return RbacRoleService::create($request->only('name'));
     }
 
     public function update(Request $request) {
-        $this->validate($request, [
+        $request->validate([
             'id' => 'required|integer',
             'name' => 'required|unique:rbac_role,name,'.$request->input('id'),
         ], $this->messages);
@@ -49,16 +49,18 @@ class RbacRoleController extends Controller {
     }
 
     public function syncNodes(Request $request) {
-        $this->validate($request, [
+        $validatedData = $request->validate([
             'role_id' => 'required|integer|min:1',
-            'nodes' => ['Regex:/^\d+(,\d+)*$/'],
+            // 'nodes' => ['Regex:/^\d+(,\d+)*$/'],
+            'nodes' => 'nullable|array',
+            'nodes.*' => 'required|integer',
         ]);
-        $nodes = empty($request->input('nodes')) ? [] : explode(',', $request->input('nodes'));
-        RbacRoleService::syncNodes($request->input('role_id'), $nodes);
+        // $nodes = empty($request->input('nodes')) ? [] : explode(',', $request->input('nodes'));
+        RbacRoleService::syncNodes($validatedData['role_id'], $validatedData['nodes']);
     }
 
     public function saveSort(Request $request) {
-        $validatedData = $this->validate($request, [
+        $validatedData = $request->validate([
             '*.id' => 'required|integer',
             '*.sort' => 'required|integer',
         ]);

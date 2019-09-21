@@ -4,6 +4,7 @@ namespace mradang\LaravelFly;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Contracts\Http\Kernel;
+use Illuminate\Support\Facades\Auth;
 
 class LaravelFlyServiceProvider extends ServiceProvider
 {
@@ -73,7 +74,7 @@ class LaravelFlyServiceProvider extends ServiceProvider
 
     protected function registerGuard()
     {
-        $this->app['auth']->viaRequest('api', function ($request) {
+        Auth::viaRequest('token', function ($request) {
             $user = Services\UserService::checkToken($request);
             return $user ?: null;
         });
@@ -81,9 +82,12 @@ class LaravelFlyServiceProvider extends ServiceProvider
 
     protected function registerRouteMiddleware()
     {
+        // 跨域中间件
         $kernel = $this->app->make(Kernel::class);
         $kernel->prependMiddleware(Middleware\CorsMiddleware::class);
 
+        // 认证中间件
+        Auth::shouldUse('api'); // 默认使用 api 认证
         $this->app['router']->aliasMiddleware('auth.basic', Middleware\Authenticate::class);
         $this->app['router']->aliasMiddleware('auth', Middleware\Authorization::class);
     }
