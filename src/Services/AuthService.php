@@ -4,7 +4,7 @@ namespace mradang\LaravelFly\Services;
 
 use Firebase\JWT\JWT;
 
-class UserService {
+class AuthService {
 
     public static function checkToken() {
         // 获取请求中的令牌

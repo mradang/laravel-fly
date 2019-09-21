@@ -6,7 +6,6 @@ use Firebase\JWT\JWT;
 use Illuminate\Support\Str;
 use Illuminate\Support\Arr;
 
-use mradang\LaravelFly\Services\UserService;
 use mradang\LaravelFly\Services\RbacNodeService;
 
 trait UserModelTrait {

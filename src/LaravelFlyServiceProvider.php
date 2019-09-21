@@ -75,7 +75,7 @@ class LaravelFlyServiceProvider extends ServiceProvider
     protected function registerGuard()
     {
         Auth::viaRequest('token', function ($request) {
-            $user = Services\UserService::checkToken($request);
+            $user = Services\AuthService::checkToken($request);
             return $user ?: null;
         });
     }
