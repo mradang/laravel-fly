@@ -2,6 +2,9 @@
 
 namespace mradang\LaravelFly\Services;
 
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
+
 use mradang\LaravelFly\Models\RbacNode;
 
 class RbacNodeService {
@@ -24,7 +27,7 @@ class RbacNodeService {
         foreach ($routes as $route) {
             // 不需要授权
             if (!in_array('auth', $route->middleware())) {
-                $nodes[] = \Str::start($route->uri, '/');
+                $nodes[] = Str::start($route->uri, '/');
             }
         }
         return $nodes;
@@ -36,7 +39,7 @@ class RbacNodeService {
         foreach ($routes as $route) {
             // 需要授权
             if (in_array('auth', $route->middleware())) {
-                $nodes[] = \Str::start($route->uri, '/');
+                $nodes[] = Str::start($route->uri, '/');
             }
         }
         return $nodes;
@@ -44,10 +47,25 @@ class RbacNodeService {
 
     private static function getRouteDesc() {
         $filename = storage_path('app/route_desc.json');
+
         $desc = [];
         if (is_file($filename) && is_readable($filename)) {
             $desc = json_decode(file_get_contents($filename), true);
         }
+
+        // 设置 fly 内置路由说明
+        Arr::set($desc, 'fly.log/lists', '日志列表');
+        Arr::set($desc, 'fly.rbac/allNodes', '功能节点列表(sample)');
+        Arr::set($desc, 'fly.rbac/allNodesWithRole', '功能节点列表');
+        Arr::set($desc, 'fly.rbac/allRoles', '角色列表');
+        Arr::set($desc, 'fly.rbac/createRole', '新建角色');
+        Arr::set($desc, 'fly.rbac/deleteRole', '删除角色');
+        Arr::set($desc, 'fly.rbac/findRoleWithNodes', '获取角色及功能节点');
+        Arr::set($desc, 'fly.rbac/refreshNodes', '刷新功能节点');
+        Arr::set($desc, 'fly.rbac/saveRoleSort', '角色排序');
+        Arr::set($desc, 'fly.rbac/syncRoleNodes', '设置角色权限');
+        Arr::set($desc, 'fly.rbac/updateRole', '修改角色');
+
         return $desc;
     }
 
@@ -66,7 +84,7 @@ class RbacNodeService {
 
         foreach ($routes as $route) {
             if (in_array('auth', $route->middleware())) {
-                $nodes[] = \Str::start($route->uri, '/');
+                $nodes[] = Str::start($route->uri, '/');
             }
         }
 
@@ -80,8 +98,8 @@ class RbacNodeService {
             if (!array_key_exists($module, $new)) {
                 $new[$module] = [];
             }
-            $function = \Str::after($node, "/api/$module/");
-            $new[$module][$function] = \Arr::get($desc, "$module.$function", '');
+            $function = Str::after($node, "/api/$module/");
+            $new[$module][$function] = Arr::get($desc, "$module.$function", '');
         }
 
         // 排序
@@ -103,9 +121,9 @@ class RbacNodeService {
         $ids = [];
         foreach ($nodes as $node) {
             list(, , $module) = explode('/', $node);
-            $function = \Str::after($node, "/api/$module/");
+            $function = Str::after($node, "/api/$module/");
             $rbac_node = RbacNode::firstOrNew(['name' => $node]);
-            $rbac_node->description = \Arr::get($desc, "$module.$function", '');
+            $rbac_node->description = Arr::get($desc, "$module.$function", '');
             $rbac_node->save();
             $ids[] = $rbac_node->id;
         }
