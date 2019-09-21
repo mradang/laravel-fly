@@ -8,12 +8,12 @@ use mradang\LaravelFly\Services\LogService;
 class LogController extends Controller {
 
     public function lists(Request $request) {
-        $this->validate($request, [
+        $request->validate([
             'page' => 'required|integer|min:1',
             'pagesize' => 'required|integer|min:1',
-            'username' => 'string',
-            'log_msg' => 'string',
-            'ip' => 'ip',
+            'username' => 'nullable|string',
+            'log_msg' => 'nullable|string',
+            'ip' => 'nullable|ip',
         ]);
         return LogService::lists(
             $request->only('username', 'log_msg', 'ip'),
