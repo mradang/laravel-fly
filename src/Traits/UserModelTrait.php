@@ -3,6 +3,8 @@
 namespace mradang\LaravelFly\Traits;
 
 use Firebase\JWT\JWT;
+use Illuminate\Support\Str;
+use Illuminate\Support\Arr;
 
 use mradang\LaravelFly\Services\UserService;
 use mradang\LaravelFly\Services\RbacNodeService;
@@ -31,7 +33,7 @@ trait UserModelTrait {
     }
 
     public function rbacResetSecret() {
-        $this->secret = str_random(8);
+        $this->secret = Str::random(8);
         return $this->save();
     }
 
@@ -39,7 +41,7 @@ trait UserModelTrait {
         if (empty($this->secret)) {
             $this->rbacResetSecret();
         }
-        $payload = array_only($this->toArray(), $fields);
+        $payload = Arr::only($this->toArray(), $fields);
         $payload['exp'] = time() + config('fly.ttl');
         return JWT::encode($payload, $this->secret);
     }
