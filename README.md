@@ -15,6 +15,7 @@ $ php artisan vendor:publish --provider="mradang\\LaravelFly\\LaravelFlyServiceP
 2. 创建队列表迁移
 ```shell
 $ php artisan queue:table
+$ php artisan queue:failed-table
 ```
 
 ## 配置
