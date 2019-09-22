@@ -11,8 +11,6 @@ class Log extends Model {
         'username',
         'ip',
         'log_msg',
-        // 'updated_at',
-        // 'created_at',
     ];
 
 }
