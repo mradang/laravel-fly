@@ -41,7 +41,7 @@ class FileService {
     }
 
     // 上传 Url
-    public function uploadUrl(string $url, string $folder = 'fileService') {
+    public static function uploadUrl(string $url, string $folder = 'fileService') {
         $folder_storage = self::getStorageFolder($folder);
         $parsed_url = parse_url($url);
         if (!is_array($parsed_url)) {

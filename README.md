@@ -19,7 +19,27 @@ $ php artisan queue:table
 
 ## 配置
 
-1. 修改 app\Exceptions\Handler.php 文件
+1. 添加 .env 环境变量，使用默认值时可省略
+```
+# 指定 token 的有效时间（单位秒），默认 24 小时（60*60*24=86400）
+FLY_JWT_TTL=86400
+# 指定 LumenFly 的 route 路径前缀，默认 fly（http://hostname/fly/路由）
+FLY_ROUTE_URI=fly
+# 指定允许跨域请求的站点，多个站点用 | 分隔
+FLY_CORS_ALLOW_ORIGIN=http://localhost
+# 指定用户模型类，实现 RBAC 的关键配置
+FLY_USER_MODEL=\App\User
+# 记录 SQL 日志，默认 false
+FLY_SQL_LOG=false
+# 可信任的反向代理地址（CIDR），多个地址用 | 分隔，默认为空字符串
+FLY_TRUSTED_PROXIES=
+# 附件存储在 storage 下的目录名（默认：attachments）
+ATTACHMENT_FOLDER=attachments
+# 缩略图存储在 storage 下的目录名（默认：thumbs）
+ATTACHMENT_THUMB_FOLDER=thumbs
+```
+
+2. 修改 app\Exceptions\Handler.php 文件
 ```php
 protected $dontReport = [
     // ......
@@ -36,42 +56,7 @@ public function render($request, Exception $exception)
 }
 ```
 
-2. 添加 .env 环境变量，使用默认值时可省略
-```
-# 指定 token 的有效时间（单位秒），默认 24 小时（60*60*24=86400）
-FLY_JWT_TTL=86400
-# 指定 LumenFly 的 route 路径前缀，默认 fly（http://hostname/fly/路由）
-FLY_ROUTE_URI=fly
-# 指定允许跨域请求的站点，多个站点用 | 分隔
-FLY_CORS_ALLOW_ORIGIN=http://localhost
-# 指定用户模型类，实现 RBAC 的关键配置
-FLY_USER_MODEL=\App\User
-# 记录 SQL 日志，默认 false
-FLY_SQL_LOG=false
-# 可信任的反向代理地址（CIDR），多个地址用 | 分隔，默认为空字符串
-FLY_TRUSTED_PROXIES=
-```
-
-3. user 数据表必须包含字段：id, name, secret
-```php
-$table->increments('id');
-$table->string('name');
-$table->string('secret')->nullable();
-```
-
-4. user 模型需引入 UserModelTrait
-```php
-use mradang\LumenFly\Traits\UserModelTrait;
-```
-> 增加以下内容：
-> - belongsToMany rbacRoles 角色关联（多对多）
-> - array getAccessAttribute 权限属性 access，user 模型需实现 getIsAdminAttribute（超级管理员）属性
-> - string rbacMakeToken(array $fields = ['id', 'name']) 生成用户访问令牌
-> - bool rbacResetSecret() 重置用户安全码
-> - void rbacSyncRoles(array $roles) 同步用户与角色的关联，$roles 为角色 id 数组
-> - void rbacDeleteUser() 删除用户权限信息
-
-5. 手动添加日志迁移到文件的任务
+3. 手动添加日志迁移到文件的任务
 
 修改 lumen 工程 app\Console\Kernel.php 文件，在 schedule 函数中增加
 ```php
@@ -91,20 +76,23 @@ try {
 }
 ```
 
-6. 刷新数据库迁移
+4. 刷新数据库迁移
 ```bash
 php artisan migrate:refresh
 ```
 
-## 添加的数据表迁移
+## 添加的内容
+
+### 添加的数据表迁移
 - rbac_access
 - rbac_node
 - rbac_role_user
 - rbac_role
 - logs
 - options
+- attachments
 
-## 添加的路由
+### 添加的路由
 - post /fly/rbac/allNodes
 - post /fly/rbac/allNodesWithRole
 - post /fly/rbac/refreshNodes
@@ -117,12 +105,12 @@ php artisan migrate:refresh
 - post /fly/rbac/saveRoleSort
 - post /fly/log/lists
 
-## 添加的路由中间件
+### 添加的路由中间件
+二选一即可
 1. auth 需要授权的路由
 2. auth.basic 只需登录的路由
-> 二选一即可
 
-## 添加的助手函数
+### 添加的助手函数
 1. 数据库日志，用于记录用户操作
 ```php
 void L($msg, $username = null)
@@ -143,7 +131,7 @@ string change_log($model)
 mixed option(string $key[, mixed $value])
 ```
 
-## 添加的命令
+### 添加的命令
 1. 生成路由描述文件：storage/app/route_desc.json
 ```bash
 php artisan fly:MakeRouteDescFile
@@ -153,3 +141,46 @@ php artisan fly:MakeRouteDescFile
 ```bash
 php artisan fly:RefreshRbacNode
 ```
+
+## 用户认证功能
+
+### 基础配置
+user 数据表必须包含字段：id, name, secret
+```php
+$table->increments('id');
+$table->string('name');
+$table->string('secret')->nullable();
+```
+
+### 引入
+user 模型引入 UserModelTrait
+```php
+use mradang\LaravelFly\Traits\UserModelTrait;
+```
+> 增加以下内容：
+> - belongsToMany rbacRoles 角色关联（多对多）
+> - array getAccessAttribute 权限属性 access，user 模型需实现 getIsAdminAttribute（超级管理员）属性
+> - string rbacMakeToken(array $fields = ['id', 'name']) 生成用户访问令牌
+> - bool rbacResetSecret() 重置用户安全码
+> - void rbacSyncRoles(array $roles) 同步用户与角色的关联，$roles 为角色 id 数组
+> - void rbacDeleteUser() 删除用户权限信息
+
+## 模型附件功能
+
+### 引入
+模型引入 AttachmentTrait
+```php
+use mradang\LumenAttachment\Traits\AttachmentTrait;
+```
+
+### 使用
+> 增加以下内容：
+> - morphMany attachments 附件关联（一对多）
+> - mradang\LumenAttachment\Models\Attachment attachmentAddByFile($file, array $data = []) 为模型上传文件附件
+> - mradang\LumenAttachment\Models\Attachment attachmentAddByUrl($url, array $data = []) 为模型上传 Url 附件
+> - void attachmentDelete($id) 删除模型的指定附件
+> - void attachmentClear() 清空模型的全部附件
+> - response attachmentDownload($id, $name = '') 下载指定附件
+> - response attachmentShowPic($id, $width = 0, $height = 0) 显示指定附件图片
+> - mradang\LumenAttachment\Models\Attachment attachmentFind($id) 查找指定附件
+
