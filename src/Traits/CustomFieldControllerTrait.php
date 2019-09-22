@@ -61,13 +61,11 @@ trait CustomFieldControllerTrait {
     }
 
     public function sortFieldGroups(Request $request) {
-        $data = json_decode($request->getContent(), true);
-        $validator = validator($data, [
+        $validatedData = $request->validate([
             '*.id' => 'required|integer|min:1',
             '*.sort' => 'required|integer',
         ]);
-        $sorts = $validator->validate();
-        $this->customFieldModel()::customFieldGroupSaveSort($sorts);
+        $this->customFieldModel()::customFieldGroupSaveSort($validatedData);
     }
 
     public function saveField(Request $request) {
@@ -119,13 +117,11 @@ trait CustomFieldControllerTrait {
     }
 
     public function sortFields(Request $request) {
-        $data = json_decode($request->getContent(), true);
-        $validator = validator($data, [
+        $validatedData = $request->validate([
             '*.id' => 'required|integer|min:1',
             '*.sort' => 'required|integer',
         ]);
-        $sorts = $validator->validate();
-        $this->customFieldModel()::customFieldSaveSort($sorts);
+        $this->customFieldModel()::customFieldSaveSort($validatedData);
     }
 
     public function moveField(Request $request) {

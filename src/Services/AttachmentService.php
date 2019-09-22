@@ -71,21 +71,9 @@ class AttachmentService {
         return FileService::response($filename, $name);
     }
 
-    public static function showPic($class, $key, $id, $width, $height) {
+    public static function showPic($class, $key, $id, $width = 0, $height = 0) {
         $attachment = Attachment::findOrFail($id);
         $filename = $attachment->file_name;
-
-        if (!FileService::isImage($filename)) {
-            return response('非图片', 400);
-        }
-
-        if ($width && $height) {
-            $filename = FileService::makeThumb($filename, $width, $height);
-            if (empty($filename)) {
-                return response('生成缩略图失败', 400);
-            }
-        }
-
         return FileService::showImage($filename, $width, $height);
     }
 
