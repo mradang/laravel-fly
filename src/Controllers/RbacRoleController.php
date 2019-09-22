@@ -51,11 +51,9 @@ class RbacRoleController extends Controller {
     public function syncNodes(Request $request) {
         $validatedData = $request->validate([
             'role_id' => 'required|integer|min:1',
-            // 'nodes' => ['Regex:/^\d+(,\d+)*$/'],
             'nodes' => 'nullable|array',
             'nodes.*' => 'required|integer',
         ]);
-        // $nodes = empty($request->input('nodes')) ? [] : explode(',', $request->input('nodes'));
         RbacRoleService::syncNodes($validatedData['role_id'], $validatedData['nodes']);
     }
 
@@ -64,7 +62,7 @@ class RbacRoleController extends Controller {
             '*.id' => 'required|integer',
             '*.sort' => 'required|integer',
         ]);
-        RbacRoleService::saveSort($validatedData['*']);
+        RbacRoleService::saveSort($validatedData);
     }
 
 }
