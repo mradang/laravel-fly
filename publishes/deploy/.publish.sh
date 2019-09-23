@@ -7,8 +7,12 @@
 # 调用方法
 # .publish.sh host port dir
 
+# 路径
+path=$(dirname $(readlink -f $0))
+basepath=$(dirname $path)
+
 # 配置参数
-project=$(basename `pwd`)
+project=$(basename $basepath)
 host=$1
 port=$2
 publish=$3

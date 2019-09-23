@@ -2,8 +2,11 @@
 
 # 调用方法 .publish.sh configName
 
+# 当前路径
+path=$(dirname $(readlink -f $0))
+
 # 配置文件
-configFile=".publish.config."$1
+configFile=$path"/.publish.config."$1
 
 # 检查配置文件
 [[ ! -f $configFile ]] && exit 0
@@ -18,7 +21,7 @@ echo -e "\033[K开始更新「$NAME」..."
 start=$(date "+%s")
 
 # 调用发布脚本
-./.publish.sh $HOST $PORT $DIR
+$path/.publish.sh $HOST $PORT $DIR
 
 # 计时
 now=$(date "+%s")

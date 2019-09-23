@@ -1,7 +1,10 @@
 #!/bin/bash
 
+# 当前路径
+path=$(dirname $(readlink -f $0))
+
 # 配置文件
-files=($(ls -la .publish.config.* | grep -v 'example' | awk {'print $9'}))
+files=($(ls -la $path/.publish.config.* | grep -v 'example' | awk {'print $9'}))
 
 # 倒计时
 for i in $(seq 5|tac);do
@@ -16,7 +19,7 @@ for configFile in "${files[@]}" ; do
 
     # 调用发布脚本
     echo -e "\033[K开始更新「$NAME」..."
-    ./.publish.sh $HOST $PORT $DIR
+    $path/.publish.sh $HOST $PORT $DIR
 done
 
 # 计时
