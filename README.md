@@ -29,7 +29,7 @@ FLY_ROUTE_URI=fly
 # 指定允许跨域请求的站点，多个站点用 | 分隔
 FLY_CORS_ALLOW_ORIGIN=http://localhost
 # 指定用户模型类，实现 RBAC 的关键配置
-FLY_USER_MODEL=\App\User
+FLY_USER_MODEL=\App\Models\User
 # 记录 SQL 日志，默认 false
 FLY_SQL_LOG=false
 # 可信任的反向代理地址（CIDR），多个地址用 | 分隔，默认为空字符串
