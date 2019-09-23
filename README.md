@@ -23,7 +23,7 @@ $ php artisan queue:table
 ```
 # 指定 token 的有效时间（单位秒），默认 24 小时（60*60*24=86400）
 FLY_JWT_TTL=86400
-# 指定 LumenFly 的 route 路径前缀，默认 fly（http://hostname/fly/路由）
+# 指定 LaravelFly 的 route 路径前缀，默认 fly（http://hostname/fly/路由）
 FLY_ROUTE_URI=fly
 # 指定允许跨域请求的站点，多个站点用 | 分隔
 FLY_CORS_ALLOW_ORIGIN=http://localhost
@@ -58,12 +58,12 @@ public function render($request, Exception $exception)
 
 3. 手动添加日志迁移到文件的任务
 
-修改 lumen 工程 app\Console\Kernel.php 文件，在 schedule 函数中增加
+修改 laravel 工程 app\Console\Kernel.php 文件，在 schedule 函数中增加
 ```php
 try {
     $schedule
     ->call(function () {
-        \mradang\LumenFly\Services\LogService::migrateToFile();
+        \mradang\LaravelFly\Services\LogService::migrateToFile();
     })
     ->cron('0 0 2 * *')
     ->name('LogService::migrateToFile')
