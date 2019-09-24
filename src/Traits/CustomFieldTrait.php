@@ -96,7 +96,7 @@ trait CustomFieldTrait {
     public function customFieldSaveData(array $data) {
         $validator = validator($data, [
             '*.field_id' => 'required|integer|min:1',
-            '*.value' => 'string',
+            '*.value' => 'nullable|string',
         ]);
         $ret = $validator->validate();
         return ValueService::save(__CLASS__, $this->getKey(), $ret);
@@ -106,7 +106,7 @@ trait CustomFieldTrait {
     public function customFieldSaveDataItem(int $field_id, $value) {
         $validator = validator(compact('field_id', 'value'), [
             'field_id' => 'required|integer|min:1',
-            'value' => 'string',
+            'value' => 'nullable|string',
         ]);
         $ret = $validator->validate();
         return ValueService::saveItem(__CLASS__, $this->getKey(), $ret);
