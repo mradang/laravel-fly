@@ -21,25 +21,37 @@ class RbacNodeService {
         return RbacNode::pluck('id');
     }
 
+    // 无需授权的节点
     public static function publicNodes() {
         $nodes = [];
         $routes = \Route::getRoutes();
         foreach ($routes as $route) {
+            $uri = Str::start($route->uri, '/');
+            // 只处理 api 路由
+            if (!Str::startsWith($uri, '/api/')) {
+                continue;
+            }
             // 不需要授权
             if (!in_array('auth', $route->middleware())) {
-                $nodes[] = Str::start($route->uri, '/');
+                $nodes[] = Str::after($uri, '/api');
             }
         }
         return $nodes;
     }
 
+    // 需要授权的节点
     public static function AuthNodes() {
         $nodes = [];
         $routes = \Route::getRoutes();
         foreach ($routes as $route) {
+            $uri = Str::start($route->uri, '/');
+            // 只处理 api 路由
+            if (!Str::startsWith($uri, '/api/')) {
+                continue;
+            }
             // 需要授权
             if (in_array('auth', $route->middleware())) {
-                $nodes[] = Str::start($route->uri, '/');
+                $nodes[] = Str::after($uri, '/api');
             }
         }
         return $nodes;
@@ -79,26 +91,18 @@ class RbacNodeService {
 
     public static function makeRouteDescFile() {
         // 读取节点数据
-        $nodes = [];
-        $routes = \Route::getRoutes();
-
-        foreach ($routes as $route) {
-            if (in_array('auth', $route->middleware())) {
-                $nodes[] = Str::start($route->uri, '/');
-            }
-        }
-
+        $nodes = self::AuthNodes();
         // 读取功能说明文件
         $desc = self::getRouteDesc();
 
         // 重新生成功能说明文件
         $new = [];
         foreach ($nodes as $node) {
-            list(, , $module) = explode('/', $node);
+            list(, $module) = explode('/', $node);
             if (!array_key_exists($module, $new)) {
                 $new[$module] = [];
             }
-            $function = Str::after($node, "/api/$module/");
+            $function = Str::after($node, "/$module/");
             $new[$module][$function] = Arr::get($desc, "$module.$function", '');
         }
 
@@ -120,8 +124,8 @@ class RbacNodeService {
         $nodes = self::AuthNodes();
         $ids = [];
         foreach ($nodes as $node) {
-            list(, , $module) = explode('/', $node);
-            $function = Str::after($node, "/api/$module/");
+            list(, $module) = explode('/', $node);
+            $function = Str::after($node, "/$module/");
             $rbac_node = RbacNode::firstOrNew(['name' => $node]);
             $rbac_node->description = Arr::get($desc, "$module.$function", '');
             $rbac_node->save();

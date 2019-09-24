@@ -4,6 +4,7 @@ namespace mradang\LaravelFly\Middleware;
 
 use Closure;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class Authorization
 {
@@ -25,7 +26,11 @@ class Authorization
         $access = $user->access;
         $path = $request->getPathInfo();
 
-        if (!in_array($path, $access)) {
+        if (!Str::startsWith($path, '/api/')) {
+            return response('Forbidden', 403);
+        }
+
+        if (!in_array(Str::after($path, '/api'), $access)) {
             return response('Forbidden', 403);
         }
 
