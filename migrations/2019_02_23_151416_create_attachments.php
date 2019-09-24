@@ -21,7 +21,7 @@ class CreateAttachments extends Migration
             $table->string('file_name'); // 文件名
             $table->unsignedInteger('file_size'); // 文件大小
             $table->unsignedInteger('sort'); // 排序
-            $table->json('data'); // 附加数据
+            $table->longText('data'); // 附加数据
             $table->timestamps();
         });
     }
