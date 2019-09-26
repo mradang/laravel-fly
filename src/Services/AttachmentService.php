@@ -69,7 +69,7 @@ class AttachmentService {
     public static function download($class, $key, $id, $name) {
         $attachment = Attachment::findOrFail($id);
         $filename = $attachment->file_name;
-        return FileService::response($filename, $name);
+        return FileService::download($filename, $name);
     }
 
     public static function showPic($class, $key, $id, $width = 0, $height = 0) {

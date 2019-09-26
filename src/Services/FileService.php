@@ -83,28 +83,9 @@ class FileService {
         return is_file($thumb_full);
     }
 
-    // 下载文件
-    public static function download(string $file_storage, string $name = '') {
-        $file_full = storage_path($file_storage);
-        if (!is_file($file_full)) {
-            return response('Not Found', 404);
-        }
-        $file_ext = pathinfo($file_full, PATHINFO_EXTENSION);
-        $file_ext = ($file_ext ? '.' : '').$file_ext;
-        $file_name = $name ?: basename($file_full, $file_ext);
-        $headers = [
-            'Content-Type' => mime_content_type($file_full),
-            'Cache-Control' => 'no-cache',
-        ];
-        return response()->download(
-            $file_full,
-            $file_name.$file_ext,
-            $headers
-        );
-    }
-
     // 输出文件
-    public static function response(string $file_storage, string $name = '') {
+    public static function download(string $file_storage, string $name = '')
+    {
         $file_full = storage_path($file_storage);
         if (!is_file($file_full)) {
             return response('Not Found', 404);
@@ -113,15 +94,10 @@ class FileService {
         $file_ext = ($file_ext ? '.' : '').$file_ext;
         $file_name = $name ?: basename($file_full, $file_ext);
         $headers = [
-            'Content-Type' => mime_content_type($file_full),
+            'Content-Disposition' => 'inline; filename="'.$file_name.'"',
             'Cache-Control' => 'no-cache',
         ];
-        $response = new BinaryFileResponse($file_full, 200, $headers);
-        $response->setContentDisposition(
-            ResponseHeaderBag::DISPOSITION_INLINE,
-            $file_name.$file_ext
-        );
-        return $response;
+        return response()->file($file_full, $headers);
     }
 
     // 显示图片
