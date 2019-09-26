@@ -3,6 +3,7 @@
 namespace mradang\LaravelFly\Services;
 
 use mradang\LaravelFly\Models\Attachment;
+use mradang\LaravelFly\Jobs\MakeThumbnail;
 
 class AttachmentService {
 
@@ -74,7 +75,12 @@ class AttachmentService {
     public static function showPic($class, $key, $id, $width = 0, $height = 0) {
         $attachment = Attachment::findOrFail($id);
         $filename = $attachment->file_name;
-        return FileService::showImage($filename, $width, $height);
+        if ($width && $height && !FileService::thumbExists($filename, $width, $height)) {
+            dispatch(new MakeThumbnail($filename, $width, $height));
+            return FileService::showImage($filename);
+        } else {
+            return FileService::showImage($filename, $width, $height);
+        }
     }
 
     public static function find($class, $key, $id) {
