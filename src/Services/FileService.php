@@ -94,7 +94,7 @@ class FileService {
         $file_ext = ($file_ext ? '.' : '').$file_ext;
         $file_name = $name ?: basename($file_full, $file_ext);
         $headers = [
-            'Content-Disposition' => 'inline; filename="'.$file_name.'"',
+            'Content-Disposition' => 'inline; filename="'.$file_name.$file_ext.'"',
             'Cache-Control' => 'no-cache',
         ];
         return response()->file($file_full, $headers);
