@@ -32,7 +32,6 @@ class LaravelFlyServiceProvider extends ServiceProvider
         $this->registerMigrations();
         $this->registerGuard();
         $this->registerRouteMiddleware();
-        $this->registerTrustedProxiesMiddleware();
     }
 
     public function register()
@@ -90,13 +89,6 @@ class LaravelFlyServiceProvider extends ServiceProvider
         Auth::shouldUse('api'); // 默认使用 api 认证
         $this->app['router']->aliasMiddleware('auth.basic', Middleware\Authenticate::class);
         $this->app['router']->aliasMiddleware('auth', Middleware\Authorization::class);
-    }
-
-    protected function registerTrustedProxiesMiddleware()
-    {
-        $this->app['router']->middleware([
-            Middleware\TrustedProxiesMiddleware::class,
-        ]);
     }
 
 }

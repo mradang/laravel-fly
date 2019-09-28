@@ -31,8 +31,6 @@ FLY_CORS_ALLOW_ORIGIN=http://localhost
 FLY_USER_MODEL=\App\Models\User
 # 记录 SQL 日志，默认 false
 FLY_SQL_LOG=false
-# 可信任的反向代理地址（CIDR），多个地址用 | 分隔，默认为空字符串
-FLY_TRUSTED_PROXIES=
 # 附件存储在 storage 下的目录名（默认：attachments）
 ATTACHMENT_FOLDER=attachments
 # 缩略图存储在 storage 下的目录名（默认：thumbs）
