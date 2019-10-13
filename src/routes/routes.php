@@ -1,7 +1,7 @@
 <?php
 
 Route::group([
-    'prefix' => 'api/' . config('fly.uri'),
+    'prefix' => config('fly.uri'),
     'namespace' => 'mradang\LaravelFly\Controllers',
     'middleware' => ['auth'],
 ], function () {

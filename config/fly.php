@@ -20,7 +20,7 @@ return [
     | 指定本扩展的 route 路径前缀，http(s)://hostname/前缀/路由
     |
     */
-    'uri' => env('FLY_ROUTE_URI', 'fly'),
+    'uri' => env('FLY_ROUTE_URI', 'api/fly'),
 
     /*
     |--------------------------------------------------------------------------
