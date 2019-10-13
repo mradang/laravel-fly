@@ -23,8 +23,6 @@ $ php artisan queue:table
 ```
 # 指定 token 的有效时间（单位秒），默认 24 小时（60*60*24=86400）
 FLY_JWT_TTL=86400
-# 指定 LaravelFly 的 route 路径前缀，默认 api/fly（http://hostname/api/fly/路由）
-FLY_ROUTE_URI=api/fly
 # 指定允许跨域请求的站点，多个站点用 | 分隔
 FLY_CORS_ALLOW_ORIGIN=http://localhost
 # 指定用户模型类，实现 RBAC 的关键配置
