@@ -15,6 +15,7 @@ class MySQLDiffCommand extends Command {
         $pdo1 = $this->getPDO(1);
         $pdo2 = $this->getPDO(2);
 
+        // 检查表
         $this->line('');
         $this->question('检查数据表：');
         $diff = $this->diff($this->getTables($pdo1), $this->getTables($pdo2), [0]);
@@ -25,6 +26,7 @@ class MySQLDiffCommand extends Command {
             $this->table(['DSN1', 'DSN2'], $diff);
         }
 
+        // 检查字段
         $this->line('');
         $this->question('检查表字段：');
         $diff = $this->diff($this->getColumns($pdo1), $this->getColumns($pdo2), ['TABLE_NAME', 'COLUMN_NAME']);
@@ -35,6 +37,18 @@ class MySQLDiffCommand extends Command {
             $this->comment('表名，列名，默认值，是否为空，字符集，字符序，类型，属性，扩展');
             $this->table(['DSN1', 'DSN2'], $diff);
         }
+
+        // 检查索引
+        $this->line('');
+        $this->question('检查表索引：');
+        $diff = $this->diff($this->getIndexes($pdo1), $this->getIndexes($pdo2), ['NON_UNIQUE', 'INDEX_NAME']);
+        if (count($diff) === 0) {
+            $this->info('表索引无差异！');
+        } else {
+            $this->error('表索引有差异：');
+            $this->comment('表名，唯一索引，索引名，列序号，列名');
+            $this->table(['DSN1', 'DSN2'], $diff);
+        }
     }
 
     private function getPDO($index) {
@@ -43,13 +57,6 @@ class MySQLDiffCommand extends Command {
         list($username, $password) = explode(':', $this->option('auth'.$index));
         $dsn = sprintf('mysql:host=%s;port=%s;dbname=%s', $host, $port, $dbname);
         return new \PDO($dsn, $username, $password);
-    }
-
-    private function getTables($pdo) {
-        $sql = 'show tables';
-        $stmt = $pdo->query($sql);
-        $stmt->setFetchMode(\PDO::FETCH_NUM);
-        return $stmt->fetchAll();
     }
 
     private function diff($arr1, $arr2, array $pri) {
@@ -83,6 +90,13 @@ class MySQLDiffCommand extends Command {
         return $diff;
     }
 
+    private function getTables($pdo) {
+        $sql = 'show tables';
+        $stmt = $pdo->query($sql);
+        $stmt->setFetchMode(\PDO::FETCH_NUM);
+        return $stmt->fetchAll();
+    }
+
     private function getColumns($pdo) {
         // 表名，列名，默认值，是否为空，字符集，字符序，类型，属性，扩展
         $fields = [
@@ -113,6 +127,26 @@ class MySQLDiffCommand extends Command {
             }
             return $col;
         }, $cols);
+    }
+
+    private function getIndexes($pdo) {
+        // 表名，唯一索引，索引名，列序号，列名
+        $fields = [
+            'TABLE_NAME',
+            'NON_UNIQUE',
+            'INDEX_NAME',
+            'SEQ_IN_INDEX',
+            'COLUMN_NAME',
+        ];
+        $sql = 'SELECT '.implode(',', $fields);
+        $sql .= ' from information_schema.STATISTICS where TABLE_SCHEMA=?';
+        $params = [$pdo->query('select database()')->fetchColumn()];
+
+        $sth = $pdo->prepare($sql);
+        $sth->execute($params);
+        $cols = $sth->fetchAll(\PDO::FETCH_ASSOC);
+
+        return $cols;
     }
 
 }
