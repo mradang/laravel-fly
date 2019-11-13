@@ -19,4 +19,13 @@ class RbacNodeController extends Controller {
         return RbacNodeService::refresh();
     }
 
+    public function syncRoles(Request $request) {
+        $validatedData = $request->validate([
+            'node_id' => 'required|integer|min:1',
+            'roles' => 'nullable|array',
+            'roles.*' => 'required|integer',
+        ]);
+        return RbacNodeService::syncRoles($validatedData['node_id'], $validatedData['roles']);
+    }
+
 }

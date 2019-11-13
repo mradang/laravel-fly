@@ -75,6 +75,7 @@ class RbacNodeService {
         Arr::set($desc, 'fly.rbac/findRoleWithNodes', '获取角色及功能节点');
         Arr::set($desc, 'fly.rbac/refreshNodes', '刷新功能节点');
         Arr::set($desc, 'fly.rbac/saveRoleSort', '角色排序');
+        Arr::set($desc, 'fly.rbac/syncNodeRoles', '设置功能节点角色');
         Arr::set($desc, 'fly.rbac/syncRoleNodes', '设置角色权限');
         Arr::set($desc, 'fly.rbac/updateRole', '修改角色');
 
@@ -136,6 +137,24 @@ class RbacNodeService {
         RbacNode::whereNotIn('id', $ids)->delete();
         // 清理无效权限
         RbacAccessService::clearInvalidAccess();
+    }
+
+    public static function syncRoles($id, array $roles) {
+        $node = RbacNode::findOrFail($id);
+        $ret = $node->roles()->sync($roles);
+        $roles = RbacRoleService::readByIds(array_merge($ret['attached'], $ret['detached']));
+        $roles->each(function($role) {
+            $role->load('users');
+        })
+        ->pluck('users')
+        ->flatten(1)
+        ->unique(function ($user) {
+            return $user->id;
+        })
+        ->each(function ($user) {
+            $user->rbacResetSecret();
+        });
+        return $node->roles;
     }
 
 }

@@ -16,6 +16,7 @@ Route::group([
         Route::post('allRoles', 'RbacRoleController@all');
         Route::post('createRole', 'RbacRoleController@create');
         Route::post('findRoleWithNodes', 'RbacRoleController@findWithNodes');
+        Route::post('syncNodeRoles', 'RbacNodeController@syncRoles');
         Route::post('syncRoleNodes', 'RbacRoleController@syncNodes');
         Route::post('updateRole', 'RbacRoleController@update');
         Route::post('deleteRole', 'RbacRoleController@delete');
