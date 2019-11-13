@@ -98,6 +98,7 @@ php artisan migrate:refresh
 - post /fly/rbac/allRoles
 - post /fly/rbac/createRole
 - post /fly/rbac/findRoleWithNodes
+- post /fly/rbac/syncNodeRoles
 - post /fly/rbac/syncRoleNodes
 - post /fly/rbac/updateRole
 - post /fly/rbac/deleteRole
