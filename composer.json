@@ -27,10 +27,7 @@
         "laravel": {
             "providers": [
                 "mradang\\LaravelFly\\LaravelFlyServiceProvider"
-            ],
-            "aliases": {
-                "FileService": "mradang\\LaravelFly\\Facades\\FileService"
-            }
+            ]
         }
     }
 }
