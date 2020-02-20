@@ -52,20 +52,20 @@ public function render($request, Exception $exception)
 
 修改 laravel 工程 app\Console\Kernel.php 文件，在 schedule 函数中增加
 ```php
-try {
-    $schedule
+$schedule
     ->call(function () {
-        \mradang\LaravelFly\Services\LogService::migrateToFile();
+        try {
+            \mradang\LaravelFly\Services\LogService::migrateToFile();
+        } catch (\Exception $e) {
+            info(sprintf('Kernel.schedule 迁移日志到文件失败：%s', $e->getMessage()));
+        }
     })
     ->cron('0 0 2 * *')
     ->name('LogService::migrateToFile')
     ->withoutOverlapping()
     ->after(function () {
-        L('Kernel.schedule 迁移日志到文件成功', 'sys');
+        info('Kernel.schedule 迁移日志到文件成功');
     });
-} catch (\Exception $e) {
-    L(sprintf('Kernel.schedule 迁移日志到文件失败：%s', $e->getMessage()), 'sys');
-}
 ```
 
 4. 刷新数据库迁移
