@@ -58,15 +58,12 @@ $schedule
         try {
             \mradang\LaravelFly\Services\LogService::migrateToFile();
         } catch (\Exception $e) {
-            info(sprintf('Kernel.schedule 迁移日志到文件失败：%s', $e->getMessage()));
+            logger()->warning(sprintf('Kernel.schedule 迁移日志到文件失败：%s', $e->getMessage()));
         }
     })
     ->cron('0 0 2 * *')
     ->name('LogService::migrateToFile')
-    ->withoutOverlapping()
-    ->after(function () {
-        info('Kernel.schedule 迁移日志到文件成功');
-    });
+    ->withoutOverlapping();
 ```
 
 4. 刷新数据库迁移
