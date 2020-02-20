@@ -52,6 +52,7 @@ public function render($request, Exception $exception)
 
 修改 laravel 工程 app\Console\Kernel.php 文件，在 schedule 函数中增加
 ```php
+// 迁移日志到文件
 $schedule
     ->call(function () {
         try {
