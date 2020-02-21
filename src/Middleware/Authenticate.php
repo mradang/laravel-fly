@@ -18,7 +18,7 @@ class Authenticate
     public function handle($request, Closure $next, $guard = null)
     {
         if (Auth::guard($guard)->guest()) {
-            return response('Unauthorized', 401);
+            abort(401);
         }
 
         return $next($request);
