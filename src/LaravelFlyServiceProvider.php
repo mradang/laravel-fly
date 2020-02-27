@@ -8,21 +8,20 @@ use Illuminate\Support\Facades\Auth;
 
 class LaravelFlyServiceProvider extends ServiceProvider
 {
-
     public function boot()
     {
         if ($this->app->runningInConsole()) {
             // 配置文件
             $this->publishes([
-                \dirname(__DIR__).'/config/fly.php' => config_path('fly.php'),
+                \dirname(__DIR__) . '/config/fly.php' => config_path('fly.php'),
             ], 'config');
             // 快捷脚本
             $this->publishes([
-                \dirname(__DIR__).'/publishes/shortcut/' => base_path(),
+                \dirname(__DIR__) . '/publishes/shortcut/' => base_path(),
             ], 'shortcut');
             // 运维脚本
             $this->publishes([
-                \dirname(__DIR__).'/publishes/deploy/' => base_path('deploy'),
+                \dirname(__DIR__) . '/publishes/deploy/' => base_path('deploy'),
             ], 'deploy');
         }
 
@@ -37,7 +36,8 @@ class LaravelFlyServiceProvider extends ServiceProvider
     public function register()
     {
         $this->mergeConfigFrom(
-            \dirname(__DIR__).'/config/fly.php', 'fly'
+            \dirname(__DIR__) . '/config/fly.php',
+            'fly'
         );
     }
 
@@ -50,7 +50,7 @@ class LaravelFlyServiceProvider extends ServiceProvider
 
     protected function registerRoutes()
     {
-        $this->loadRoutesFrom(__DIR__.'/routes/routes.php');
+        $this->loadRoutesFrom(__DIR__ . '/routes/routes.php');
     }
 
     protected function registerCommands()
@@ -67,7 +67,7 @@ class LaravelFlyServiceProvider extends ServiceProvider
     protected function registerMigrations()
     {
         if ($this->app->runningInConsole()) {
-            $this->loadMigrationsFrom(\dirname(__DIR__).'/migrations/');
+            $this->loadMigrationsFrom(\dirname(__DIR__) . '/migrations/');
         }
     }
 
@@ -86,9 +86,7 @@ class LaravelFlyServiceProvider extends ServiceProvider
         $kernel->prependMiddleware(Middleware\CorsMiddleware::class);
 
         // 认证中间件
-        Auth::shouldUse('api'); // 默认使用 api 认证
         $this->app['router']->aliasMiddleware('auth.basic', Middleware\Authenticate::class);
         $this->app['router']->aliasMiddleware('auth', Middleware\Authorization::class);
     }
-
 }

@@ -16,8 +16,10 @@ class Authorization
      * @param  string|null  $guard
      * @return mixed
      */
-    public function handle($request, Closure $next, $guard = null)
+    public function handle($request, Closure $next)
     {
+        $guard = 'api';
+
         if (Auth::guard($guard)->guest()) {
             abort(401);
         }
