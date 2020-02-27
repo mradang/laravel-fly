@@ -73,7 +73,7 @@ class LaravelFlyServiceProvider extends ServiceProvider
 
     protected function registerGuard()
     {
-        Auth::viaRequest('token', function ($request) {
+        Auth::viaRequest('fly-token', function ($request) {
             $user = Services\AuthService::checkToken($request);
             return $user ?: null;
         });
@@ -88,5 +88,11 @@ class LaravelFlyServiceProvider extends ServiceProvider
         // 认证中间件
         $this->app['router']->aliasMiddleware('auth.basic', Middleware\Authenticate::class);
         $this->app['router']->aliasMiddleware('auth', Middleware\Authorization::class);
+
+        // 修改全局认证配置
+        config([
+            'auth.defaults.guard' => 'api',
+            'auth.guards.api.driver' => 'fly-token',
+        ]);
     }
 }
