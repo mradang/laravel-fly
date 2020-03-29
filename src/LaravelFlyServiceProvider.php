@@ -91,6 +91,7 @@ class LaravelFlyServiceProvider extends ServiceProvider
 
         // 修改全局认证配置
         config([
+            'auth.defaults.guard' => 'api',
             'auth.guards.api.driver' => 'fly-token',
         ]);
     }
