@@ -24,7 +24,7 @@ class CorsMiddleware
                 'Access-Control-Allow-Origin' => $origin,
                 'Access-Control-Allow-Methods' => 'POST, GET, OPTIONS',
                 'Access-Control-Max-Age' => '86400',
-                'Access-Control-Allow-Headers' => 'Content-Type, authorization'
+                'Access-Control-Allow-Headers' => 'Content-Type, authorization, X-Requested-With'
             ];
         }
 
