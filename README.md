@@ -31,24 +31,7 @@ FLY_USER_MODEL=\App\Models\User
 FLY_SQL_LOG=false
 ```
 
-2. 修改 app\Exceptions\Handler.php 文件
-```php
-protected $dontReport = [
-    // ......
-    \App\Services\Exception::class,
-];
-
-public function render($request, Exception $exception)
-{
-    // 将App异常改为http400错误输出
-    if ($exception instanceof \App\Services\Exception) {
-        return response($exception->getMessage(), 400);
-    }
-    return parent::render($request, $exception);
-}
-```
-
-3. 手动添加日志迁移到文件的任务
+2. 手动添加日志迁移到文件的任务
 
 修改 laravel 工程 app\Console\Kernel.php 文件，在 schedule 函数中增加
 ```php
@@ -66,7 +49,7 @@ $schedule
     ->withoutOverlapping();
 ```
 
-4. 刷新数据库迁移
+3. 刷新数据库迁移
 ```bash
 php artisan migrate:refresh
 ```

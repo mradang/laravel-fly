@@ -18,8 +18,7 @@
             "mradang\\LaravelFly\\": "src"
         },
         "files": [
-            "src/app/helpers.php",
-            "src/app/Exception.php"
+            "src/app/helpers.php"
         ]
     },
     "extra": {
