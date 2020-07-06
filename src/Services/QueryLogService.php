@@ -8,9 +8,10 @@ use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class QueryLogService {
-
-    public static function log() {
+class QueryLogService
+{
+    public static function log()
+    {
         $request = app()->request;
 
         if ($request->method() === 'OPTIONS') {
@@ -29,13 +30,13 @@ class QueryLogService {
         });
     }
 
-    private static function formatDuration($seconds) {
+    private static function formatDuration($seconds)
+    {
         if ($seconds < 0.001) {
-            return round($seconds * 1000000).'μs';
+            return round($seconds * 1000000) . 'μs';
         } elseif ($seconds < 1) {
-            return round($seconds * 1000, 2).'ms';
+            return round($seconds * 1000, 2) . 'ms';
         }
-        return round($seconds, 2).'s';
+        return round($seconds, 2) . 's';
     }
-
 }

@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Log;
+
 if (! function_exists('L')) {
 
     function L($msg, $username = null) {
@@ -26,7 +28,7 @@ if (! function_exists('L')) {
         }
         $stack = ltrim($stack, ',');
 
-        \Log::debug($stack."\n", func_get_args());
+        Log::debug($stack."\n", func_get_args());
     }
 
     function change_log($model) {

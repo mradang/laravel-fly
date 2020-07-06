@@ -4,9 +4,10 @@ namespace mradang\LaravelFly\Services;
 
 use Firebase\JWT\JWT;
 
-class AuthService {
-
-    public static function checkToken() {
+class AuthService
+{
+    public static function checkToken()
+    {
         // 获取请求中的令牌
         $token = self::getTokenForRequest();
         if (empty($token)) {
@@ -39,15 +40,15 @@ class AuthService {
                 return $user;
             }
         } catch (\Exception $e) {
-            info('JWTException: '.$e->getMessage());
+            info('JWTException: ' . $e->getMessage());
         }
         return false;
     }
 
-    private static function getTokenForRequest() {
+    private static function getTokenForRequest()
+    {
         $request = app()->request;
         $token = $request->input('api_token', $request->bearerToken());
         return $token;
     }
-
 }

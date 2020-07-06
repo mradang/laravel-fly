@@ -8,16 +8,18 @@ use Illuminate\Support\Arr;
 
 use mradang\LaravelFly\Services\RbacNodeService;
 
-trait UserModelTrait {
-
-    public function rbacRoles() {
+trait UserModelTrait
+{
+    public function rbacRoles()
+    {
         return $this->belongsToMany('mradang\LaravelFly\Models\RbacRole', 'rbac_role_user', 'user_id', 'role_id');
     }
 
     abstract protected function getIsAdminAttribute();
 
     // access
-    public function getAccessAttribute() {
+    public function getAccessAttribute()
+    {
         $nodes = RbacNodeService::publicNodes();
 
         if ($this->isAdmin) {
@@ -31,12 +33,14 @@ trait UserModelTrait {
         return array_values(array_unique($nodes));
     }
 
-    public function rbacResetSecret() {
+    public function rbacResetSecret()
+    {
         $this->secret = Str::random(8);
         return $this->save();
     }
 
-    public function rbacMakeToken(array $fields = ['id', 'name']) {
+    public function rbacMakeToken(array $fields = ['id', 'name'])
+    {
         if (empty($this->secret)) {
             $this->rbacResetSecret();
         }
@@ -45,7 +49,8 @@ trait UserModelTrait {
         return JWT::encode($payload, $this->secret);
     }
 
-    public function rbacSyncRoles(array $roles) {
+    public function rbacSyncRoles(array $roles)
+    {
         $this->load('rbacRoles');
         $old = $this->rbacRoles->pluck('name')->toArray();
         $this->rbacRoles()->sync($roles);
@@ -63,9 +68,9 @@ trait UserModelTrait {
         }
     }
 
-    public function rbacDeleteUser() {
+    public function rbacDeleteUser()
+    {
         $this->rbacRoles()->detach();
         $this->rbacResetSecret();
     }
-
 }

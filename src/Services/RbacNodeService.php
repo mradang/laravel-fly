@@ -3,28 +3,33 @@
 namespace mradang\LaravelFly\Services;
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 
 use mradang\LaravelFly\Models\RbacNode;
 
-class RbacNodeService {
-
-    public static function all() {
+class RbacNodeService
+{
+    public static function all()
+    {
         return RbacNode::orderBy('name')->get();
     }
 
-    public static function allWithRole() {
+    public static function allWithRole()
+    {
         return RbacNode::with('roles')->orderBy('name')->get();
     }
 
-    public static function ids() {
+    public static function ids()
+    {
         return RbacNode::pluck('id');
     }
 
     // 无需授权的节点
-    public static function publicNodes() {
+    public static function publicNodes()
+    {
         $nodes = [];
-        $routes = \Route::getRoutes();
+        $routes = Route::getRoutes();
         foreach ($routes as $route) {
             $uri = Str::start($route->uri, '/');
             // 只处理 api 路由
@@ -40,9 +45,10 @@ class RbacNodeService {
     }
 
     // 需要授权的节点
-    public static function AuthNodes() {
+    public static function AuthNodes()
+    {
         $nodes = [];
-        $routes = \Route::getRoutes();
+        $routes = Route::getRoutes();
         foreach ($routes as $route) {
             $uri = Str::start($route->uri, '/');
             // 只处理 api 路由
@@ -57,7 +63,8 @@ class RbacNodeService {
         return $nodes;
     }
 
-    private static function getRouteDesc() {
+    private static function getRouteDesc()
+    {
         $filename = storage_path('app/route_desc.json');
 
         $desc = [];
@@ -82,7 +89,8 @@ class RbacNodeService {
         return $desc;
     }
 
-    private static function setRouteDesc(array $desc) {
+    private static function setRouteDesc(array $desc)
+    {
         $filename = storage_path('app/route_desc.json');
         $content = json_encode($desc, JSON_UNESCAPED_UNICODE | JSON_FORCE_OBJECT);
         if ($content && is_writable(dirname($filename))) {
@@ -90,7 +98,8 @@ class RbacNodeService {
         }
     }
 
-    public static function makeRouteDescFile() {
+    public static function makeRouteDescFile()
+    {
         // 读取节点数据
         $nodes = self::AuthNodes();
         // 读取功能说明文件
@@ -117,7 +126,8 @@ class RbacNodeService {
         return self::setRouteDesc($new);
     }
 
-    public static function refresh() {
+    public static function refresh()
+    {
         // 读取功能说明文件
         $desc = self::getRouteDesc();
 
@@ -139,22 +149,22 @@ class RbacNodeService {
         RbacAccessService::clearInvalidAccess();
     }
 
-    public static function syncRoles($id, array $roles) {
+    public static function syncRoles($id, array $roles)
+    {
         $node = RbacNode::findOrFail($id);
         $ret = $node->roles()->sync($roles);
         $roles = RbacRoleService::readByIds(array_merge($ret['attached'], $ret['detached']));
-        $roles->each(function($role) {
+        $roles->each(function ($role) {
             $role->load('users');
         })
-        ->pluck('users')
-        ->flatten(1)
-        ->unique(function ($user) {
-            return $user->id;
-        })
-        ->each(function ($user) {
-            $user->rbacResetSecret();
-        });
+            ->pluck('users')
+            ->flatten(1)
+            ->unique(function ($user) {
+                return $user->id;
+            })
+            ->each(function ($user) {
+                $user->rbacResetSecret();
+            });
         return $node->roles;
     }
-
 }

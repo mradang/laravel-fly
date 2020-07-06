@@ -1,14 +1,13 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+
 Route::group([
     'prefix' => 'api/fly',
     'namespace' => 'mradang\LaravelFly\Controllers',
     'middleware' => ['auth'],
 ], function () {
-
-    Route::group([
-        'prefix' => 'rbac',
-    ], function () {
+    Route::group(['prefix' => 'rbac'], function () {
         Route::post('allNodes', 'RbacNodeController@all');
         Route::post('allNodesWithRole', 'RbacNodeController@allWithRole');
         Route::post('refreshNodes', 'RbacNodeController@refresh');
@@ -23,10 +22,7 @@ Route::group([
         Route::post('saveRoleSort', 'RbacRoleController@saveSort');
     });
 
-    Route::group([
-        'prefix' => 'log',
-    ], function () {
+    Route::group(['prefix' => 'log'], function () {
         Route::post('lists', 'LogController@lists');
     });
-
 });
