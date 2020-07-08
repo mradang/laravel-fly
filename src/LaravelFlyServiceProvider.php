@@ -81,10 +81,6 @@ class LaravelFlyServiceProvider extends ServiceProvider
 
     protected function registerRouteMiddleware()
     {
-        // 跨域中间件
-        $kernel = $this->app->make(Kernel::class);
-        $kernel->prependMiddleware(Middleware\CorsMiddleware::class);
-
         // 认证中间件
         $this->app['router']->aliasMiddleware('auth.basic', Middleware\Authenticate::class);
         $this->app['router']->aliasMiddleware('auth', Middleware\Authorization::class);
