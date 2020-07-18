@@ -6,8 +6,6 @@ path=$(dirname $(readlink -f $0))
 # 配置文件
 envFile=$path"/../.env"
 
-# 需在 mysql 中添加用户 abc，授予全局查询权限
-
 DB_HOST=`cat $envFile | grep ^DB_HOST= | awk -F= '{print $2}'`
 DB_PORT=`cat $envFile | grep ^DB_PORT= | awk -F= '{print $2}'`
 DB_DATABASE=`cat $envFile | grep ^DB_DATABASE= | awk -F= '{print $2}'`
