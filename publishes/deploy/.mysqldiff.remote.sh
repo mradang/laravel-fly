@@ -22,7 +22,7 @@ DB_USERNAME=`cat $envFile | grep ^DB_USERNAME= | awk -F= '{print $2}'`
 DB_PASSWORD=`cat $envFile | grep ^DB_PASSWORD= | awk -F= '{print $2}'`
 
 # 开启远程访问
-if [ $MYSQL_FRIEWALL = true ] ; then
+if [[ $MYSQL_FRIEWALL = true ]] ; then
     ssh -p $PORT root@$HOST "firewall-cmd --add-service=mysql"
 fi
 
@@ -35,6 +35,6 @@ sed -i 's/^\(DB_DATABASE=.*\)_new$/\1/' $envFile
 php artisan fly:mysqldiff --host1=$DB_HOST:$DB_PORT --dbname1=${DB_DATABASE}_new --auth1=$DB_USERNAME:$DB_PASSWORD --host2=$HOST:3306 --dbname2=$DBNAME --auth2=$MYSQL_DIFF_USER:$MYSQL_DIFF_PASS
 
 # 关闭远程访问
-if [ $MYSQL_FRIEWALL = true ] ; then
+if [[ $MYSQL_FRIEWALL = true ]] ; then
     ssh -p $PORT root@$HOST "firewall-cmd --remove-service=mysql"
 fi
