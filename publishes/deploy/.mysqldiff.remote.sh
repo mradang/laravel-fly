@@ -32,7 +32,7 @@ php artisan migrate:fresh >> /dev/null 2>&1
 sed -i 's/^\(DB_DATABASE=.*\)_new$/\1/' $envFile
 
 # 与远程库比较
-php artisan fly:mysqldiff --host1=$DB_HOST:$DB_PORT --dbname1=${DB_DATABASE}_new --auth1=$DB_USERNAME:$DB_PASSWORD --host2=$HOST:3306 --dbname2=$DBNAME --auth2=abc:def
+php artisan fly:mysqldiff --host1=$DB_HOST:$DB_PORT --dbname1=${DB_DATABASE}_new --auth1=$DB_USERNAME:$DB_PASSWORD --host2=$HOST:3306 --dbname2=$DBNAME --auth2=$MYSQL_DIFF_USER:$MYSQL_DIFF_PASS
 
 # 关闭远程访问
 if [ $MYSQL_FRIEWALL = true ] ; then

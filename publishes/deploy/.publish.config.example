@@ -4,3 +4,5 @@ DIR=publish.dir
 NAME=project name
 DBNAME=database name
 MYSQL_FRIEWALL=true|false
+MYSQL_DIFF_USER=user
+MYSQL_DIFF_PASS=pass
