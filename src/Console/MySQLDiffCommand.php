@@ -4,6 +4,7 @@ namespace mradang\LaravelFly\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 class MySQLDiffCommand extends Command
 {
@@ -129,6 +130,10 @@ class MySQLDiffCommand extends Command
             }
             if ($col['COLUMN_DEFAULT'] === 'current_timestamp()') {
                 $col['COLUMN_DEFAULT'] = 'CURRENT_TIMESTAMP';
+            }
+            // 忽略整数型字段长度
+            if (Str::startsWith($col['COLUMN_TYPE'], ['int', 'tinyint', 'bigint'])) {
+                $col['COLUMN_TYPE'] = preg_replace('/\(\d+\)/', '', $col['COLUMN_TYPE']);
             }
             return $col;
         }, $cols);
