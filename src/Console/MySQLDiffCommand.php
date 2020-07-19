@@ -43,7 +43,7 @@ class MySQLDiffCommand extends Command
         // 检查索引
         $this->line('');
         $this->question('检查表索引：');
-        $diff = $this->diff($this->getIndexes($pdo1), $this->getIndexes($pdo2), ['INDEX_NAME', 'SEQ_IN_INDEX']);
+        $diff = $this->diff($this->getIndexes($pdo1), $this->getIndexes($pdo2), ['TABLE_NAME', 'INDEX_NAME', 'SEQ_IN_INDEX']);
         if (count($diff) === 0) {
             $this->info('表索引无差异！');
         } else {
@@ -131,8 +131,13 @@ class MySQLDiffCommand extends Command
             if ($col['COLUMN_DEFAULT'] === 'current_timestamp()') {
                 $col['COLUMN_DEFAULT'] = 'CURRENT_TIMESTAMP';
             }
+            // 忽略整型字段长度
             if (Str::startsWith($col['COLUMN_TYPE'], ['int', 'tinyint', 'bigint'])) {
                 $col['COLUMN_TYPE'] = preg_replace('/\(\d+\)/', '', $col['COLUMN_TYPE']);
+            }
+            // MySQL 8 在 column 上有表达式类型的默认值时，会在该行的 Extra 列打上 DEFAULT_GENERATED 的 tag
+            if ($col['EXTRA'] === 'DEFAULT_GENERATED') {
+                $col['EXTRA'] = '';
             }
             return $col;
         }, $cols);
