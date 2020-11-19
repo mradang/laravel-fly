@@ -4,18 +4,6 @@ use Illuminate\Support\Facades\Log;
 
 if (! function_exists('L')) {
 
-    function L($msg, $username = null) {
-        \mradang\LaravelFly\Services\LogService::create($msg, $username);
-    }
-
-    function option(...$args) {
-        if (count($args) === 1) {
-            return \mradang\LaravelFly\Services\OptionService::get($args[0]);
-        } else {
-            return \mradang\LaravelFly\Services\OptionService::set($args[0], $args[1]);
-        }
-    }
-
     function debug() {
         $trace = debug_backtrace()[0];
 
