@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Log;
 
-if (! function_exists('L')) {
+if (! function_exists('debug')) {
 
     function debug() {
         $trace = debug_backtrace()[0];
