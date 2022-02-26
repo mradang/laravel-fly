@@ -1,4 +1,4 @@
 #!/bin/bash
 
 echo -ne "\e]0;laravel.serve\a"
-php -S 0.0.0.0:8000 -t public/
+php artisan serve --host=0.0.0.0 --port=8000
