@@ -2,9 +2,10 @@
 
 use Illuminate\Support\Facades\Log;
 
-if (! function_exists('debug')) {
+if (!function_exists('debug')) {
 
-    function debug() {
+    function debug()
+    {
         $trace = debug_backtrace()[0];
 
         $stack = '';
@@ -16,7 +17,6 @@ if (! function_exists('debug')) {
         }
         $stack = ltrim($stack, ',');
 
-        Log::debug($stack."\n", func_get_args());
+        Log::debug($stack . "\n", func_get_args());
     }
-
 }
