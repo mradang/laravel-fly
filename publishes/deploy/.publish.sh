@@ -23,16 +23,18 @@ ssh -p $port root@$host "cd /home/$project/; git pull"
 ssh -p $port root@$host "rm /home/$project.temp/ -rf"
 ssh -p $port root@$host "mkdir /home/$project.temp"
 ssh -p $port root@$host "\cp /home/$project/* /home/$project.temp/ -a"
-
 ssh -p $port root@$host "cd /home/$project.temp/; php /usr/local/bin/composer.phar install"
 
+ssh -p $port root@$host "cd /var/www/$publish/; rm config/ -rf; rm app/ -rf; rm vendor/ -rf;"
 ssh -p $port root@$host "\cp /home/$project.temp/* /var/www/$publish/ -a"
 
 ssh -p $port root@$host "restorecon -RF /var/www/$publish/"
 ssh -p $port root@$host "chmod a+rw /var/www/$publish/storage -R"
 ssh -p $port root@$host "chcon -t httpd_sys_rw_content_t /var/www/$publish/storage -R >> /dev/null 2>&1"
+ssh -p $port root@$host "chown apache:apache /var/www/$publish/storage/logs/*"
+
+ssh -p $port root@$host "cd /var/www/$publish/; php artisan route:cache"
 
 ssh -p $port root@$host "cd /var/www/$publish/; php artisan rbac:RefreshRbacNode"
-ssh -p $port root@$host "chown apache:apache /var/www/$publish/storage/logs/*"
 
 ssh -p $port root@$host "systemctl restart supervisord"
