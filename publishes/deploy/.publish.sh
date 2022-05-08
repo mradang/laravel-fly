@@ -23,7 +23,7 @@ ssh -p $port root@$host "cd /home/$project/; git pull"
 ssh -p $port root@$host "rm /home/$project.temp/ -rf"
 ssh -p $port root@$host "mkdir /home/$project.temp"
 ssh -p $port root@$host "\cp /home/$project/* /home/$project.temp/ -a"
-ssh -p $port root@$host "cd /home/$project.temp/; php /usr/local/bin/composer.phar install"
+ssh -p $port root@$host "cd /home/$project.temp/; php /usr/local/bin/composer.phar --no-dev install"
 
 ssh -p $port root@$host "cd /var/www/$publish/; rm config/ -rf; rm app/ -rf; rm vendor/ -rf;"
 ssh -p $port root@$host "\cp /home/$project.temp/* /var/www/$publish/ -a"
