@@ -34,6 +34,7 @@ ssh -p $port root@$host "chcon -t httpd_sys_rw_content_t /var/www/$publish/stora
 ssh -p $port root@$host "chown apache:apache /var/www/$publish/storage/logs/*"
 
 ssh -p $port root@$host "cd /var/www/$publish/; php artisan route:cache"
+ssh -p $port root@$host "cd /var/www/$publish/; php artisan event:cache"
 
 ssh -p $port root@$host "cd /var/www/$publish/; php artisan rbac:RefreshRbacNode"
 
