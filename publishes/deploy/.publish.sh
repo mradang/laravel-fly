@@ -6,10 +6,6 @@
 # 常量参数
 path=$(dirname $(readlink -f $0))
 project=$(basename $(dirname $path))
-# 读取环境变量
-if [ -e $path/.env ]; then
-  source $path/.env
-fi
 # 读取发布配置
 source $1
 
@@ -29,10 +25,6 @@ v=$(git rev-parse --short HEAD)
 
 # 打包
 if [ ! -e /tmp/$project.$v.tar.gz ]; then
-  if [ -n $HTTP_PROXY ]; then
-    export http_proxy=$HTTP_PROXY
-  fi
-
   cd /tmp/$project
   composer --no-dev install
 
