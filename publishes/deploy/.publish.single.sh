@@ -21,7 +21,7 @@ echo -e "\033[K开始更新「$NAME」..."
 start=$(date "+%s")
 
 # 调用发布脚本
-$path/.publish.sh $HOST $PORT $DIR
+$path/.publish.sh $configFile
 
 # 计时
 now=$(date "+%s")

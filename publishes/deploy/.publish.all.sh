@@ -19,7 +19,7 @@ for configFile in "${files[@]}" ; do
 
     # 调用发布脚本
     echo -e "\033[K开始更新「$NAME」..."
-    $path/.publish.sh $HOST $PORT $DIR
+    $path/.publish.sh $configFile
 done
 
 # 计时
