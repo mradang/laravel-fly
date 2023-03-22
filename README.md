@@ -12,12 +12,6 @@ $ composer require mradang/laravel-fly -vvv
 $ php artisan vendor:publish --provider="mradang\\LaravelFly\\LaravelFlyServiceProvider"
 ```
 
-2. 创建队列表迁移
-
-```shell
-$ php artisan queue:table
-```
-
 ## 配置
 
 1. 添加 .env 环境变量，使用默认值时可省略
