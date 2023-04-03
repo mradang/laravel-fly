@@ -10,7 +10,7 @@ project=$(basename $(dirname $path))
 source $1
 
 # 克隆项目
-if [ -d /tmp/$project -a -e /tmp/$project/config ]; then
+if [ -d /tmp/$project -a -e /tmp/$project/.git/config ]; then
   cd /tmp/$project
   git fetch --all
   git reset --hard origin/master
