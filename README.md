@@ -1,7 +1,7 @@
 ## 安装
 
 ```shell
-$ composer require mradang/laravel-fly -vvv
+composer require mradang/laravel-fly -vvv
 ```
 
 ### 可选项
@@ -9,7 +9,7 @@ $ composer require mradang/laravel-fly -vvv
 1. 发布配置文件、快捷脚本和运维脚本
 
 ```shell
-$ php artisan vendor:publish --provider="mradang\\LaravelFly\\LaravelFlyServiceProvider"
+php artisan vendor:publish --provider="mradang\\LaravelFly\\LaravelFlyServiceProvider"
 ```
 
 ## 配置
@@ -19,6 +19,8 @@ $ php artisan vendor:publish --provider="mradang\\LaravelFly\\LaravelFlyServiceP
 ```
 # 记录 SQL 日志，默认 false
 FLY_SQL_LOG=false
+# SQL 日志频道，默认使用 config('logging.default')
+FLY_SQL_LOG_CHANNEL=
 ```
 
 ## 添加的内容
