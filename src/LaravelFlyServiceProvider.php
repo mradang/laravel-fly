@@ -60,7 +60,8 @@ class LaravelFlyServiceProvider extends ServiceProvider
             if (count($bindings) > 0) {
                 $realSql = vsprintf($sqlWithPlaceholders, array_map([$pdo, 'quote'], $bindings));
             }
-            Log::channel(config('fly.sql_log_channel', config('logging.default')))
+
+            Log::channel(config('fly.sql_log_channel') ?: config('logging.default'))
                 ->debug(sprintf(
                     '[%s: %s] [%s] %s',
                     request()->method(),
