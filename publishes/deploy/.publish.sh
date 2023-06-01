@@ -50,7 +50,9 @@ ssh -p $PORT root@$HOST "chown apache:apache /var/www/$DIR/* -R"
 ssh -p $PORT root@$HOST "chmod a+rw /var/www/$DIR/storage -R"
 ssh -p $PORT root@$HOST "chcon -t httpd_sys_rw_content_t /var/www/$DIR/storage -R >> /dev/null 2>&1"
 
+ssh -p $PORT root@$HOST "cd /var/www/$DIR/; php artisan config:cache"
 ssh -p $PORT root@$HOST "cd /var/www/$DIR/; php artisan route:cache"
+ssh -p $PORT root@$HOST "cd /var/www/$DIR/; php artisan event:cache"
 ssh -p $PORT root@$HOST "cd /var/www/$DIR/; php artisan rbac:RefreshRbacNode"
 
 ssh -p $PORT root@$HOST "systemctl restart supervisord"
