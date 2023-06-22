@@ -39,6 +39,7 @@ class LaravelFlyServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 Console\MySQLDiffCommand::class,
+                Console\MySQLStructCommand::class,
             ]);
         }
     }

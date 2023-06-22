@@ -1,8 +1,7 @@
+NAME=project name
 HOST=example.example.com
 PORT=22
-DIR=publish.dir
-NAME=project name
-DBNAME=database name
-MYSQL_FRIEWALL=true|false
-MYSQL_DIFF_USER=user
-MYSQL_DIFF_PASS=pass
+USER=root
+KEY=app_unique_name
+MYSQL_PORT=33061
+NGINX_PORT=8001
