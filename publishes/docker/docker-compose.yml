@@ -1,0 +1,43 @@
+version: "3"
+
+services:
+    mysql:
+        image: mysql:8.0
+        restart: always
+        ports:
+            - "${MYSQL_PORT}:3306"
+        volumes:
+            - "${MYSQL_DATA_VOLUME}:/var/lib/mysql"
+        environment:
+            - "TZ=Asia/Shanghai"
+            - "MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}"
+            - "MYSQL_DATABASE=app"
+
+    redis:
+        image: redis:latest
+        restart: always
+        expose:
+            - "6379"
+        volumes:
+            - "${REDIS_DATA_VOLUME}:/data"
+
+    php:
+        build: ./php/
+        restart: always
+        expose:
+            - "9000"
+        depends_on:
+            - mysql
+            - redis
+        volumes:
+            - "${CODE_VOLUME}:/var/www/html"
+
+    nginx:
+        build: ./nginx/
+        restart: always
+        ports:
+            - "${NGINX_PORT}:80"
+        depends_on:
+            - php
+        volumes:
+            - "${CODE_VOLUME}:/var/www/html"

@@ -23,6 +23,11 @@ class LaravelFlyServiceProvider extends ServiceProvider
             $this->publishes([
                 \dirname(__DIR__) . '/publishes/deploy/' => base_path('deploy'),
             ], 'deploy');
+            // docker
+            $this->publishes([
+                \dirname(__DIR__) . '/publishes/docker/' => base_path('docker'),
+            ], 'docker');
+
         }
 
         $this->registerCommands();

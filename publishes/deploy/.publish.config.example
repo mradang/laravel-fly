@@ -1,7 +1,8 @@
-NAME=project name
+NAME=name
 HOST=example.example.com
 PORT=22
 USER=root
-KEY=app_unique_name
-MYSQL_PORT=33061
+KEY=unique_project_name
 NGINX_PORT=8001
+MYSQL_PORT=33061
+MYSQL_ROOT_PASSWORD=password
