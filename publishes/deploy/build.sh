@@ -44,14 +44,13 @@ _build() {
     docker save $KEY-php | gzip >/tmp/$KEY-php.tar.gz
 
     # 发布镜像到宿主机
-    ssh -p $PORT $USER@$HOST "rm /tmp/$KEY-nginx.tar.gz -f"
-    ssh -p $PORT $USER@$HOST "rm /tmp/$KEY-php.tar.gz -f"
     scp -P $PORT /tmp/$KEY-nginx.tar.gz $USER@$HOST:/tmp
     scp -P $PORT /tmp/$KEY-php.tar.gz $USER@$HOST:/tmp
-
     ssh -p $PORT $USER@$HOST "docker load -i /tmp/$KEY-nginx.tar.gz"
     ssh -p $PORT $USER@$HOST "docker load -i /tmp/$KEY-php.tar.gz"
     ssh -p $PORT $USER@$HOST "docker image prune -f"
+    ssh -p $PORT $USER@$HOST "rm /tmp/$KEY-nginx.tar.gz -f"
+    ssh -p $PORT $USER@$HOST "rm /tmp/$KEY-php.tar.gz -f"
 
     # 启动
     ssh -p $PORT $USER@$HOST "cd $docker_dir; docker-compose stop; docker-compose up -d"
