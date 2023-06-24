@@ -54,14 +54,29 @@ _publish() {
     ssh -p $PORT $USER@$HOST "mkdir -p $publish_dir"
     ssh -p $PORT $USER@$HOST "rm $publish_dir/config/ $publish_dir/app/ $publish_dir/vendor/ -rf"
     ssh -p $PORT $USER@$HOST "\cp /tmp/$project.$v/* $publish_dir/ -a"
-    ssh -p $PORT $USER@$HOST "cd $publish_dir; chmod a+rw storage -R"
     ssh -p $PORT $USER@$HOST "rm /tmp/$project.$v* -rf"
 
     # 发布配置文件
-    cp $path/app.env.$configName /tmp/$KEY.env
+    cp $path/../.env.example /tmp/$KEY.env
+
     sed -i "s|APP_NAME=.*|APP_NAME=${KEY}|" /tmp/$KEY.env
+    sed -i "s|APP_ENV=.*|APP_ENV=production|" /tmp/$KEY.env
+    sed -i "s|APP_DEBUG=.*|APP_DEBUG=false|" /tmp/$KEY.env
+    sed -i "s|APP_URL=.*|APP_URL=${APP_URL}|" /tmp/$KEY.env
+    sed -i "s|LOG_CHANNEL=.*|LOG_CHANNEL=daily|" /tmp/$KEY.env
+    sed -i "s|DB_CONNECTION=.*|DB_CONNECTION=mysql|" /tmp/$KEY.env
+    sed -i "s|DB_HOST=.*|DB_HOST=mysql|" /tmp/$KEY.env
+    sed -i "s|DB_PORT=.*|DB_PORT=3306|" /tmp/$KEY.env
+    sed -i "s|DB_DATABASE=.*|DB_DATABASE=app|" /tmp/$KEY.env
+    sed -i "s|DB_USERNAME=.*|DB_USERNAME=root|" /tmp/$KEY.env
     DB_PASSWORD=$(printf '%s\n' "$MYSQL_ROOT_PASSWORD" | sed -e 's/[\/&]/\\&/g')
     sed -i "s|DB_PASSWORD=.*|DB_PASSWORD=${DB_PASSWORD}|" /tmp/$KEY.env
+    sed -i "s|CACHE_DRIVER=.*|CACHE_DRIVER=redis|" /tmp/$KEY.env
+    sed -i "s|QUEUE_CONNECTION=.*|QUEUE_CONNECTION=redis|" /tmp/$KEY.env
+    sed -i "s|REDIS_HOST=.*|REDIS_HOST=redis|" /tmp/$KEY.env
+
+    echo -e '\n# --------------------------------' >>/tmp/$KEY.env
+    cat $path/app.env.$configName >>/tmp/$KEY.env
     scp -P $PORT /tmp/$KEY.env $USER@$HOST:$publish_dir/.env
     rm /tmp/$KEY.env -f
 
@@ -70,6 +85,8 @@ _publish() {
 
     # php容器
     artisan="cd /var/www/html; /usr/local/bin/php artisan"
+    ssh -p $PORT $USER@$HOST "$docker_exec php sh -c 'chown www-data:www-data /var/www/html/* -R'"
+    ssh -p $PORT $USER@$HOST "$docker_exec php sh -c 'chmod a+rw /var/www/html/storage -R'"
     ssh -p $PORT $USER@$HOST "$docker_exec php sh -c '$artisan key:generate --force'"
     ssh -p $PORT $USER@$HOST "$docker_exec php sh -c '$artisan config:cache'"
     ssh -p $PORT $USER@$HOST "$docker_exec php sh -c '$artisan route:cache'"
