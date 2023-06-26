@@ -50,8 +50,7 @@ _publish() {
     ssh -p $PORT $USER@$HOST "tar -mxzf /tmp/$project.$v.tar.gz -C /tmp/$project.$v"
 
     # 执行发布
-    publish_dir=/var/www/$KEY/serve
-    ssh -p $PORT $USER@$HOST "mkdir -p $publish_dir"
+    publish_dir=/home/$USER/$KEY/www/serve
     ssh -p $PORT $USER@$HOST "rm $publish_dir/config/ $publish_dir/app/ $publish_dir/vendor/ -rf"
     ssh -p $PORT $USER@$HOST "\cp /tmp/$project.$v/* $publish_dir/ -a"
     ssh -p $PORT $USER@$HOST "rm /tmp/$project.$v* -rf"
@@ -81,7 +80,7 @@ _publish() {
     rm /tmp/$KEY.env -f
 
     # 操作容器
-    docker_exec="cd /docker/$KEY; docker-compose exec"
+    docker_exec="cd /home/$USER/$KEY/docker; docker-compose exec"
 
     # php容器
     artisan="cd /var/www/html; /usr/local/bin/php artisan"

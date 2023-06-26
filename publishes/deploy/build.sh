@@ -18,6 +18,8 @@ _build() {
 
     cd $path/../docker
 
+    server_dir=/home/$USER/$KEY
+
     # 配置文件
     cp .env.example .env
     sed -i "s|COMPOSE_PROJECT_NAME=.*|COMPOSE_PROJECT_NAME=${KEY}|" .env
@@ -25,14 +27,16 @@ _build() {
     sed -i "s|MYSQL_PORT=.*|MYSQL_PORT=${MYSQL_PORT}|" .env
     PASSWORD=$(printf '%s\n' "$MYSQL_ROOT_PASSWORD" | sed -e 's/[\/&]/\\&/g')
     sed -i "s|MYSQL_ROOT_PASSWORD=.*|MYSQL_ROOT_PASSWORD=${PASSWORD}|" .env
-    sed -i "s|MYSQL_DATA_VOLUME=.*|MYSQL_DATA_VOLUME=/volumes/${KEY}/mysql_data|" .env
-    sed -i "s|REDIS_DATA_VOLUME=.*|REDIS_DATA_VOLUME=/volumes/${KEY}/redis_data|" .env
-    sed -i "s|CODE_VOLUME=.*|CODE_VOLUME=/var/www/${KEY}/serve|" .env
+    sed -i "s|MYSQL_DATA_VOLUME=.*|MYSQL_DATA_VOLUME=${server_dir}/mysql_data|" .env
+    sed -i "s|REDIS_DATA_VOLUME=.*|REDIS_DATA_VOLUME=${server_dir}/redis_data|" .env
+    sed -i "s|CODE_VOLUME=.*|CODE_VOLUME=${server_dir}/www/serve|" .env
 
     # 复制 docker 编排文件到宿主机
-    docker_dir=/docker/$KEY
-    ssh -p $PORT $USER@$HOST "mkdir -p $docker_dir"
-    scp -P $PORT -r ./ $USER@$HOST:$docker_dir
+    ssh -p $PORT $USER@$HOST "mkdir -p $server_dir/docker"
+    scp -P $PORT -r ./ $USER@$HOST:$server_dir/docker
+
+    # 创建程序代码目录
+    ssh -p $PORT $USER@$HOST "mkdir -p $server_dir/www/serve"
 
     # 构建镜像
     docker build -t $KEY-nginx ./nginx
@@ -50,9 +54,10 @@ _build() {
     ssh -p $PORT $USER@$HOST "docker load -i /tmp/$KEY-php.tar.gz"
     ssh -p $PORT $USER@$HOST "rm /tmp/$KEY-nginx.tar.gz -f"
     ssh -p $PORT $USER@$HOST "rm /tmp/$KEY-php.tar.gz -f"
+    rm $path/../docker/.env /tmp/$KEY-nginx.tar.gz /tmp/$KEY-php.tar.gz -f
 
     # 启动
-    ssh -p $PORT $USER@$HOST "cd $docker_dir; docker-compose stop; docker-compose up -d"
+    ssh -p $PORT $USER@$HOST "cd $server_dir/docker; docker-compose stop; docker-compose up -d"
     ssh -p $PORT $USER@$HOST "docker image prune -f"
 
     # mysql容器
@@ -64,12 +69,10 @@ _build() {
     echo 'user=root' >>$mycnf
     echo "password=${MYSQL_ROOT_PASSWORD}" >>$mycnf
     scp -P $PORT $mycnf $USER@$HOST:/tmp/$KEY.my.cnf
-    ssh -p $PORT $USER@$HOST "cd $docker_dir; docker-compose cp /tmp/$KEY.my.cnf mysql:/root/.my.cnf"
-    ssh -p $PORT $USER@$HOST "cd $docker_dir; docker-compose exec mysql chmod 600 /root/.my.cnf"
+    ssh -p $PORT $USER@$HOST "cd $server_dir/docker; docker-compose cp /tmp/$KEY.my.cnf mysql:/root/.my.cnf"
+    ssh -p $PORT $USER@$HOST "cd $server_dir/docker; docker-compose exec mysql chmod 600 /root/.my.cnf"
     ssh -p $PORT $USER@$HOST "rm /tmp/$KEY.my.cnf -f"
-
-    # 清理
-    rm $path/../docker/.env /tmp/$KEY.my.cnf /tmp/$KEY-nginx.tar.gz /tmp/$KEY-php.tar.gz -rf
+    rm $mycnf -f
 }
 
 # 倒计时

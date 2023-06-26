@@ -1,7 +1,7 @@
 NAME=name
 HOST=example.example.com
 PORT=22
-USER=root
+USER=docker
 KEY=unique_project_name
 NGINX_PORT=8001
 MYSQL_PORT=33061
