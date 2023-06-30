@@ -37,7 +37,9 @@ _publish() {
         composer --no-dev install
 
         if [ -s /tmp/$project/vendor/autoload.php ]; then
-            tar -czf /tmp/$project.$v.tar.gz -C/tmp/$project/ . --exclude .git deploy docker
+            tar -czf /tmp/$project.$v.tar.gz \
+                --exclude .git --exclude deploy --exclude docker --exclude .vscode --exclude '*.sh' \
+              .
         else
             echo "$project 打包失败."
             return 1
@@ -74,7 +76,7 @@ _publish() {
     sed -i "s|QUEUE_CONNECTION=.*|QUEUE_CONNECTION=redis|" /tmp/$KEY.env
     sed -i "s|REDIS_HOST=.*|REDIS_HOST=redis|" /tmp/$KEY.env
 
-    echo -e '\n# --------------------------------' >>/tmp/$KEY.env
+    echo -e '\n# --------------------------------\n' >>/tmp/$KEY.env
     cat $path/app.env.$configName >>/tmp/$KEY.env
     scp -P $PORT /tmp/$KEY.env $USER@$HOST:$publish_dir/.env
     rm /tmp/$KEY.env -f
@@ -84,7 +86,7 @@ _publish() {
 
     # php容器
     artisan="cd /var/www/html; /usr/local/bin/php artisan"
-    ssh -p $PORT $USER@$HOST "$docker_exec php sh -c 'chown www-data:www-data /var/www/html/* -R'"
+    ssh -p $PORT $USER@$HOST "$docker_exec php sh -c 'chmod a+rw /var/www/html/.env'"
     ssh -p $PORT $USER@$HOST "$docker_exec php sh -c 'chmod a+rw /var/www/html/storage -R'"
     ssh -p $PORT $USER@$HOST "$docker_exec php sh -c '$artisan key:generate --force'"
     ssh -p $PORT $USER@$HOST "$docker_exec php sh -c '$artisan config:cache'"
