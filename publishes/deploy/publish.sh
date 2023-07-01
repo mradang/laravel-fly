@@ -38,8 +38,8 @@ _publish() {
 
         if [ -s /tmp/$project/vendor/autoload.php ]; then
             tar -czf /tmp/$project.$v.tar.gz \
-                --exclude .git --exclude deploy --exclude docker --exclude .vscode --exclude '*.sh' \
-              .
+            --exclude .git --exclude deploy --exclude docker --exclude .vscode --exclude '*.sh' \
+            .
         else
             echo "$project 打包失败."
             return 1
@@ -85,14 +85,7 @@ _publish() {
     docker_exec="cd /home/$USER/$KEY/docker; docker-compose exec"
 
     # php容器
-    artisan="cd /var/www/html; /usr/local/bin/php artisan"
-    ssh -p $PORT $USER@$HOST "$docker_exec php sh -c 'chmod a+rw /var/www/html/.env'"
-    ssh -p $PORT $USER@$HOST "$docker_exec php sh -c 'chmod a+rw /var/www/html/storage -R'"
-    ssh -p $PORT $USER@$HOST "$docker_exec php sh -c '$artisan key:generate --force'"
-    ssh -p $PORT $USER@$HOST "$docker_exec php sh -c '$artisan config:cache'"
-    ssh -p $PORT $USER@$HOST "$docker_exec php sh -c '$artisan route:cache'"
-    ssh -p $PORT $USER@$HOST "$docker_exec php sh -c '$artisan event:cache'"
-    ssh -p $PORT $USER@$HOST "$docker_exec php sh -c '$artisan rbac:RefreshRbacNode'"
+    ssh -p $PORT $USER@$HOST "$docker_exec -u www-data php sh -c 'after_publish.sh'"
     ssh -p $PORT $USER@$HOST "$docker_exec php /usr/bin/supervisorctl reload"
 }
 

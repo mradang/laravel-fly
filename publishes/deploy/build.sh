@@ -22,7 +22,13 @@ _build() {
 
     # 配置文件
     cp .env.example .env
+
+    WWWUSER=$(ssh -p $PORT $USER@$HOST 'echo $(id -u)')
+    WWWGROUP=$(ssh -p $PORT $USER@$HOST 'echo $(id -g)')
+
     sed -i "s|COMPOSE_PROJECT_NAME=.*|COMPOSE_PROJECT_NAME=${KEY}|" .env
+    sed -i "s|WWWUSER=.*|WWWUSER=${WWWUSER}|" .env
+    sed -i "s|WWWGROUP=.*|WWWGROUP=${WWWGROUP}|" .env
     sed -i "s|NGINX_PORT=.*|NGINX_PORT=${NGINX_PORT}|" .env
     sed -i "s|MYSQL_PORT=.*|MYSQL_PORT=${MYSQL_PORT}|" .env
     PASSWORD=$(printf '%s\n' "$MYSQL_ROOT_PASSWORD" | sed -e 's/[\/&]/\\&/g')
@@ -39,22 +45,19 @@ _build() {
     ssh -p $PORT $USER@$HOST "mkdir -p $server_dir/www/serve"
 
     # 构建镜像
-    docker build -t $KEY-nginx ./nginx
-    docker build -t $KEY-php ./php
+    docker-compose build
+    rm .env -f
     docker image prune -f
 
     # 导出镜像
-    docker save $KEY-nginx | gzip >/tmp/$KEY-nginx.tar.gz
-    docker save $KEY-php | gzip >/tmp/$KEY-php.tar.gz
-
-    # 发布镜像到宿主机
-    scp -P $PORT /tmp/$KEY-nginx.tar.gz $USER@$HOST:/tmp
-    scp -P $PORT /tmp/$KEY-php.tar.gz $USER@$HOST:/tmp
-    ssh -p $PORT $USER@$HOST "docker load -i /tmp/$KEY-nginx.tar.gz"
-    ssh -p $PORT $USER@$HOST "docker load -i /tmp/$KEY-php.tar.gz"
-    ssh -p $PORT $USER@$HOST "rm /tmp/$KEY-nginx.tar.gz -f"
-    ssh -p $PORT $USER@$HOST "rm /tmp/$KEY-php.tar.gz -f"
-    rm $path/../docker/.env /tmp/$KEY-nginx.tar.gz /tmp/$KEY-php.tar.gz -f
+    for dockerfile in $(find . -name "Dockerfile"); do
+        image_name=$(basename $(dirname $dockerfile))
+        docker save $KEY-$image_name | gzip >/tmp/$KEY-$image_name.tar.gz
+        scp -P $PORT /tmp/$KEY-$image_name.tar.gz $USER@$HOST:/tmp
+        ssh -p $PORT $USER@$HOST "docker load -i /tmp/$KEY-$image_name.tar.gz"
+        ssh -p $PORT $USER@$HOST "rm /tmp/$KEY-$image_name.tar.gz -f"
+        rm /tmp/$KEY-$image_name.tar.gz -f
+    done
 
     # 启动
     ssh -p $PORT $USER@$HOST "cd $server_dir/docker; docker-compose stop; docker-compose up -d"

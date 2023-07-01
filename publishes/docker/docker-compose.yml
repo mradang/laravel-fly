@@ -22,7 +22,11 @@ services:
             - "${REDIS_DATA_VOLUME}:/data"
 
     php:
-        build: ./php/
+        build:
+            context: ./php/
+            args:
+                WWWUSER: "${WWWUSER}"
+                WWWGROUP: "${WWWGROUP}"
         restart: always
         expose:
             - "9000"
