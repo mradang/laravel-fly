@@ -34,11 +34,11 @@ _publish() {
 
     # 打包
     if [ ! -e /tmp/$project.$v.tar.gz ]; then
-        composer --no-dev install
+        docker run --rm -u www-data -v "/tmp/$project:/var/www/html" -w /var/www/html $KEY-php:latest composer --no-dev install
 
         if [ -s /tmp/$project/vendor/autoload.php ]; then
             tar -czf /tmp/$project.$v.tar.gz \
-            --exclude .git --exclude deploy --exclude docker --exclude .vscode --exclude '*.sh' \
+            --exclude .git --exclude deploy --exclude docker --exclude .vscode \
             .
         else
             echo "$project 打包失败."

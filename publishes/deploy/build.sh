@@ -16,12 +16,14 @@ _build() {
     fi
     source $configFile
 
-    cd $path/../docker
+    # 复制 docker 文件到临时目录
+    mkdir -p /tmp/$KEY
+    \cp $path/../docker /tmp/$KEY -a
+    \cp $path/../docker/.env.example /tmp/$KEY/docker/.env
+    cd /tmp/$KEY/docker
 
+    # 生成配置文件
     server_dir=/home/$USER/$KEY
-
-    # 配置文件
-    cp .env.example .env
 
     WWWUSER=$(ssh -p $PORT $USER@$HOST 'echo $(id -u)')
     WWWGROUP=$(ssh -p $PORT $USER@$HOST 'echo $(id -g)')
@@ -37,16 +39,8 @@ _build() {
     sed -i "s|REDIS_DATA_VOLUME=.*|REDIS_DATA_VOLUME=${server_dir}/redis_data|" .env
     sed -i "s|CODE_VOLUME=.*|CODE_VOLUME=${server_dir}/www/serve|" .env
 
-    # 复制 docker 编排文件到宿主机
-    ssh -p $PORT $USER@$HOST "mkdir -p $server_dir/docker"
-    scp -P $PORT -r ./ $USER@$HOST:$server_dir/docker
-
-    # 创建程序代码目录
-    ssh -p $PORT $USER@$HOST "mkdir -p $server_dir/www/serve"
-
     # 构建镜像
     docker-compose build
-    rm .env -f
     docker image prune -f
 
     # 导出镜像
@@ -59,23 +53,18 @@ _build() {
         rm /tmp/$KEY-$image_name.tar.gz -f
     done
 
-    # 启动
-    ssh -p $PORT $USER@$HOST "cd $server_dir/docker; docker-compose stop; docker-compose up -d"
-    ssh -p $PORT $USER@$HOST "docker image prune -f"
+    # 创建程序代码目录
+    ssh -p $PORT $USER@$HOST "mkdir -p $server_dir/www/serve"
 
-    # mysql容器
-    mycnf=/tmp/$KEY.my.cnf
-    echo '[client]' >$mycnf
-    echo 'user=root' >>$mycnf
-    echo "password=${MYSQL_ROOT_PASSWORD}" >>$mycnf
-    echo '[mysqldump]' >>$mycnf
-    echo 'user=root' >>$mycnf
-    echo "password=${MYSQL_ROOT_PASSWORD}" >>$mycnf
-    scp -P $PORT $mycnf $USER@$HOST:/tmp/$KEY.my.cnf
-    ssh -p $PORT $USER@$HOST "cd $server_dir/docker; docker-compose cp /tmp/$KEY.my.cnf mysql:/root/.my.cnf"
-    ssh -p $PORT $USER@$HOST "cd $server_dir/docker; docker-compose exec mysql chmod 600 /root/.my.cnf"
-    ssh -p $PORT $USER@$HOST "rm /tmp/$KEY.my.cnf -f"
-    rm $mycnf -f
+    # 复制 docker 编排文件目录到宿主机
+    scp -P $PORT -r /tmp/$KEY/docker/ $USER@$HOST:$server_dir/www/serve
+
+    # 清理本地 docker 临时目录
+    rm /tmp/$KEY -rf
+
+    # 启动
+    ssh -p $PORT $USER@$HOST "cd $server_dir/www/serve/docker; docker-compose stop; docker-compose up -d"
+    ssh -p $PORT $USER@$HOST "docker image prune -f"
 }
 
 # 倒计时

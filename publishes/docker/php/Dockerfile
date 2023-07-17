@@ -8,10 +8,13 @@ RUN echo "http://mirrors.aliyun.com/alpine/latest-stable/main/" >/etc/apk/reposi
 
 RUN apk update && \
     # apk upgrade && \
-    apk add gcc g++ make autoconf libzip-dev supervisor shadow && \
-    docker-php-ext-install zip bcmath pdo_mysql && \
+    apk add gcc g++ make autoconf libzip-dev supervisor shadow \
+    libpng-dev libwebp-dev libjpeg-turbo-dev freetype-dev && \
+    docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg --with-webp && \
+    docker-php-ext-install zip bcmath pdo_mysql gd && \
     printf 'no\nno\n' | pecl install redis && \
-    docker-php-ext-enable redis
+    docker-php-ext-enable redis && \
+    curl -sLS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
 
 WORKDIR /var/www/html
 

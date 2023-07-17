@@ -2,7 +2,10 @@ version: "3"
 
 services:
     mysql:
-        image: mysql:8.0
+        build:
+            context: ./mysql/
+            args:
+                MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
         restart: always
         ports:
             - "127.0.0.1:${MYSQL_PORT}:3306"

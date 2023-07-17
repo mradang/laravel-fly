@@ -1,0 +1,130 @@
+#!/usr/bin/env bash
+
+path=$(dirname $(readlink -f $0))
+
+DOCKER_COMPOSE=(docker-compose)
+
+DOCKER_COMPOSE+=(-f "$path/docker/docker-compose.yml")
+
+APP_SERVICE="php"
+
+function container_is_not_running {
+    echo "container is not running" >&2
+    echo "" >&2
+    echo "You may container using the following commands: 'fly up' or 'fly up -d'" >&2
+
+    exit 1
+}
+
+EXEC="yes"
+
+if ! docker info >/dev/null 2>&1; then
+    echo "Docker is not running." >&2
+
+    exit 1
+fi
+
+# Determine if container is currently up...
+if "${DOCKER_COMPOSE[@]}" ps "$APP_SERVICE" 2>&1 | grep 'Exit\|exited'; then
+    echo "Shutting down old container processes..." >&2
+
+    "${DOCKER_COMPOSE[@]}" down >/dev/null 2>&1
+
+    EXEC="no"
+elif [ -z "$("${DOCKER_COMPOSE[@]}" ps -q)" ]; then
+    EXEC="no"
+fi
+
+ARGS=()
+
+# Proxy PHP commands to the "php" binary on the application container...
+if [ "$1" == "php" ]; then
+    shift 1
+
+    if [ "$EXEC" == "yes" ]; then
+        ARGS+=(exec -u www-data)
+        [ ! -t 0 ] && ARGS+=(-T)
+        ARGS+=("$APP_SERVICE" "php" "$@")
+    else
+        container_is_not_running
+    fi
+
+# Proxy Composer commands to the "composer" binary on the application container...
+elif [ "$1" == "composer" ]; then
+    shift 1
+
+    if [ "$EXEC" == "yes" ]; then
+        ARGS+=(exec -u www-data)
+        [ ! -t 0 ] && ARGS+=(-T)
+        ARGS+=("$APP_SERVICE" "composer" "$@")
+    else
+        container_is_not_running
+    fi
+
+# Proxy Artisan commands to the "artisan" binary on the application container...
+elif [ "$1" == "artisan" ] || [ "$1" == "art" ] || [ "$1" == "a" ]; then
+    shift 1
+
+    if [ "$EXEC" == "yes" ]; then
+        ARGS+=(exec -u www-data)
+        [ ! -t 0 ] && ARGS+=(-T)
+        ARGS+=("$APP_SERVICE" php artisan "$@")
+    else
+        container_is_not_running
+    fi
+
+# Initiate a Laravel Tinker session within the application container...
+elif [ "$1" == "tinker" ]; then
+    shift 1
+
+    if [ "$EXEC" == "yes" ]; then
+        ARGS+=(exec -u www-data)
+        [ ! -t 0 ] && ARGS+=(-T)
+        ARGS+=("$APP_SERVICE" php artisan tinker)
+    else
+        container_is_not_running
+    fi
+
+# Initiate a Bash shell within the application container...
+elif [ "$1" == "shell" ] || [ "$1" == "sh" ]; then
+    shift 1
+
+    if [ "$EXEC" == "yes" ]; then
+        ARGS+=(exec -u www-data)
+        [ ! -t 0 ] && ARGS+=(-T)
+        ARGS+=("$APP_SERVICE" sh "$@")
+    else
+        container_is_not_running
+    fi
+
+# Initiate a root user Bash shell within the application container...
+elif [ "$1" == "root-shell" ] || [ "$1" == "root-sh" ]; then
+    shift 1
+
+    if [ "$EXEC" == "yes" ]; then
+        ARGS+=(exec)
+        [ ! -t 0 ] && ARGS+=(-T)
+        ARGS+=("$APP_SERVICE" sh "$@")
+    else
+        container_is_not_running
+    fi
+
+# tail laravel log within the application container...
+elif [ "$1" == "log" ]; then
+    shift 1
+
+    if [ "$EXEC" == "yes" ]; then
+        ARGS+=(exec -u www-data)
+        [ ! -t 0 ] && ARGS+=(-T)
+        ARGS+=("$APP_SERVICE" tail -f /var/www/html/storage/logs/laravel.log)
+    else
+        container_is_not_running
+    fi
+
+# Pass unknown commands to the "docker-compose" binary...
+else
+    ARGS+=("$@")
+fi
+
+# Run Docker Compose with the defined arguments...
+"${DOCKER_COMPOSE[@]}" "${ARGS[@]}"
