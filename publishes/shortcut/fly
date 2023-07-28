@@ -2,7 +2,7 @@
 
 path=$(dirname $(readlink -f $0))
 
-DOCKER_COMPOSE=(docker-compose)
+DOCKER_COMPOSE=(/usr/local/bin/docker-compose)
 
 DOCKER_COMPOSE+=(-f "$path/docker/docker-compose.yml")
 
