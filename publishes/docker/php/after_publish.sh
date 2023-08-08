@@ -2,6 +2,7 @@
 
 cd /var/www/html
 
+php artisan config:cache
 php artisan key:generate --force
 
 php artisan config:cache
