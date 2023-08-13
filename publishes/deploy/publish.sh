@@ -38,8 +38,8 @@ _publish() {
 
         if [ -s /tmp/$project/vendor/autoload.php ]; then
             tar -czf /tmp/$project.$v.tar.gz \
-            --exclude .git --exclude deploy --exclude docker --exclude .vscode \
-            .
+                --exclude .git --exclude deploy --exclude docker --exclude .vscode \
+                .
         else
             echo "$project 打包失败."
             return 1
@@ -47,7 +47,11 @@ _publish() {
     fi
 
     # 上传宿主机
-    scp -P $PORT /tmp/$project.$v.tar.gz $USER@$HOST:/tmp
+    local_size=$(ls -l /tmp/$project.$v.tar.gz | awk '{print $5}')
+    server_size=$(ssh -p $PORT $USER@$HOST "ls -l /tmp/$project.$v.tar.gz 2>/dev/null | awk '{print \$5}'")
+    if [ ${server_size:-0} -ne $local_size ]; then
+        scp -P $PORT /tmp/$project.$v.tar.gz $USER@$HOST:/tmp
+    fi
     ssh -p $PORT $USER@$HOST "mkdir /tmp/$project.$v"
     ssh -p $PORT $USER@$HOST "tar -mxzf /tmp/$project.$v.tar.gz -C /tmp/$project.$v"
 
@@ -55,7 +59,7 @@ _publish() {
     publish_dir=/home/$USER/$KEY/www/serve
     ssh -p $PORT $USER@$HOST "rm $publish_dir/config/ $publish_dir/app/ $publish_dir/vendor/ -rf"
     ssh -p $PORT $USER@$HOST "\cp /tmp/$project.$v/* $publish_dir/ -a"
-    ssh -p $PORT $USER@$HOST "rm /tmp/$project.$v* -rf"
+    ssh -p $PORT $USER@$HOST "rm /tmp/$project.$v -rf"
 
     # 发布配置文件
     cp $path/../.env.example /tmp/$KEY.env
@@ -85,7 +89,7 @@ _publish() {
     docker_exec="cd /home/$USER/$KEY/www/serve/docker; docker-compose exec"
 
     # php容器
-    ssh -p $PORT $USER@$HOST "$docker_exec -u www-data php sh -c 'after_publish.sh'"
+    ssh -p $PORT $USER@$HOST "$docker_exec -u www-data php /usr/local/bin/after_publish.sh"
     ssh -p $PORT $USER@$HOST "$docker_exec php /usr/bin/supervisorctl reload"
 }
 

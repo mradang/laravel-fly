@@ -11,7 +11,7 @@ php artisan event:cache
 
 php artisan migrate:status | grep "Migration table not found" >/dev/null
 if [ $? -eq 0 ]; then
-    php artisan migrate
+    php artisan migrate --force
 fi
 
 php artisan rbac:RefreshRbacNode
