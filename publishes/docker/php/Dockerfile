@@ -3,6 +3,9 @@ FROM php:8.1-fpm-alpine
 ARG WWWUSER
 ARG WWWGROUP
 
+COPY after_publish.sh /usr/local/bin/
+COPY supervisor.ini /etc/supervisor.d/
+
 RUN echo "http://mirrors.aliyun.com/alpine/latest-stable/main/" >/etc/apk/repositories && \
     echo "http://mirrors.aliyun.com/alpine/latest-stable/community/" >>/etc/apk/repositories && \
     apk update && \
@@ -14,13 +17,10 @@ RUN echo "http://mirrors.aliyun.com/alpine/latest-stable/main/" >/etc/apk/reposi
     docker-php-ext-enable redis && \
     apk del gcc g++ make autoconf && \
     rm -rf /tmp/*.tgz /var/cache/apk/* /tmp/pear/ && \
-    mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
-
-COPY --from=composer/composer:latest-bin /composer /usr/bin/composer
-COPY after_publish.sh /usr/local/bin/
-COPY supervisor.ini /etc/supervisor.d/
-
-RUN chmod +x /usr/local/bin/after_publish.sh && \
+    mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini" && \
+    curl https://getcomposer.org/download/2.5.8/composer.phar -o /usr/local/bin/composer && \
+    chmod +x /usr/local/bin/composer && \
+    chmod +x /usr/local/bin/after_publish.sh && \
     echo "* * * * * cd /var/www/html && php artisan schedule:run >> /dev/null 2>&1" >>/var/spool/cron/crontabs/www-data && \
     usermod -u $WWWUSER www-data && groupmod -g $WWWGROUP www-data
 
