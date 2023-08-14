@@ -25,7 +25,7 @@ fi
 # 备份
 baseFileName=$KEY\_$configName\_$(date "+%Y%m%d%H%M%S")
 sqlFile=/tmp/$baseFileName.sql
-docker_exec="cd /home/$USER/$KEY/docker; docker-compose exec"
+docker_exec="cd /home/$USER/$KEY/www/serve/docker; docker-compose exec"
 ssh -p $PORT $USER@$HOST "$docker_exec mysql mysqldump app > $sqlFile"
 
 # 打包下载

@@ -36,7 +36,7 @@ scp -P $PORT /tmp/$project.struct.json $USER@$HOST:/home/$USER/$KEY/www/serve/my
 # 远程库比较
 docker_php="docker-compose exec php /usr/local/bin/php"
 struct_file=/var/www/html/mysql.base_struct.json
-ssh -p $PORT $USER@$HOST "cd /home/$USER/$KEY/docker; $docker_php artisan fly:mysqldiff --baseStructFile=$struct_file"
+ssh -p $PORT $USER@$HOST "cd /home/$USER/$KEY/www/serve/docker; $docker_php artisan fly:mysqldiff --baseStructFile=$struct_file"
 
 # 清理
 rm /tmp/$project.struct.json -f
