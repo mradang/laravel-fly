@@ -9,7 +9,7 @@ RUN echo "http://mirrors.aliyun.com/alpine/latest-stable/main/" >/etc/apk/reposi
     apk upgrade && \
     apk add gcc g++ make autoconf libzip-dev supervisor shadow && \
     docker-php-ext-install zip bcmath pdo_mysql && \
-    curl http://10.0.0.29/redis-5.3.7.tgz -o /tmp/redis-5.3.7.tgz && \
+    curl https://pecl.php.net/get/redis-5.3.7.tgz -o /tmp/redis-5.3.7.tgz && \
     printf 'no\nno\n' | pecl install -o /tmp/redis-5.3.7.tgz && \
     docker-php-ext-enable redis && \
     apk del gcc g++ make autoconf && \
