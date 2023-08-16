@@ -91,6 +91,8 @@ _publish() {
     # php容器
     ssh -p $PORT $USER@$HOST "$docker_exec -u www-data php /usr/local/bin/after_publish.sh"
     ssh -p $PORT $USER@$HOST "$docker_exec php /usr/bin/supervisorctl reload"
+
+    echo "$configName 已发布"
 }
 
 # 倒计时
