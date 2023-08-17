@@ -121,6 +121,18 @@ elif [ "$1" == "log" ]; then
         container_is_not_running
     fi
 
+# reload
+elif [ "$1" == "reload" ]; then
+    shift 1
+
+    if [ "$EXEC" == "yes" ]; then
+        ARGS+=(exec)
+        [ ! -t 0 ] && ARGS+=(-T)
+        ARGS+=("$APP_SERVICE" supervisorctl reload)
+    else
+        container_is_not_running
+    fi
+
 # Pass unknown commands to the "docker-compose" binary...
 else
     ARGS+=("$@")
