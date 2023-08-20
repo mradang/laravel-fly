@@ -1,10 +1,11 @@
 FROM php:8.1-fpm-alpine
 
+ARG ENV
 ARG WWWUSER
 ARG WWWGROUP
 
 COPY after_publish.sh /usr/local/bin/
-COPY supervisor.ini /etc/supervisor.d/
+COPY supervisor.$ENV.ini /etc/supervisor.d/supervisor.ini
 
 RUN echo "http://mirrors.aliyun.com/alpine/latest-stable/main/" >/etc/apk/repositories && \
     echo "http://mirrors.aliyun.com/alpine/latest-stable/community/" >>/etc/apk/repositories && \

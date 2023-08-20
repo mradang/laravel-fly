@@ -28,6 +28,7 @@ services:
         build:
             context: ./php/
             args:
+                ENV: "${ENV}"
                 WWWUSER: "${WWWUSER}"
                 WWWGROUP: "${WWWGROUP}"
         restart: always
