@@ -65,6 +65,8 @@ _build() {
     # 启动
     ssh -p $PORT $USER@$HOST "cd $server_dir/www/serve/docker; docker-compose stop; docker-compose up -d"
     ssh -p $PORT $USER@$HOST "docker image prune -f"
+
+    echo "$configName 已构建"
 }
 
 # 倒计时
