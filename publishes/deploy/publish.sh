@@ -107,7 +107,7 @@ path=$(dirname $(readlink -f $0))
 
 if [ $# -eq 0 ]; then
     # 未指定配置名，发布全部
-    files=($(ls -la $path/.publish.config.* | grep -v 'example' | awk {'print $9'}))
+    files=($(ls -la $path/.publish.config.* | grep -v 'example' | grep -v 'test' | awk {'print $9'}))
     for configFile in "${files[@]}"; do
         _publish $path ${configFile#*.publish.config.}
     done
