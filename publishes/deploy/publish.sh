@@ -86,7 +86,7 @@ _publish() {
     rm /tmp/$KEY.env -f
 
     # 操作容器
-    docker_exec="cd /home/$USER/$KEY/www/serve/docker; docker-compose exec"
+    docker_exec="cd /home/$USER/$KEY/www/serve/docker; docker compose exec"
 
     # php容器
     ssh -p $PORT $USER@$HOST "$docker_exec -u www-data php /usr/local/bin/after_publish.sh"

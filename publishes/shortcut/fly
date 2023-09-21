@@ -2,7 +2,7 @@
 
 path=$(dirname $(readlink -f $0))
 
-DOCKER_COMPOSE=(/usr/local/bin/docker-compose)
+DOCKER_COMPOSE=(docker compose)
 
 DOCKER_COMPOSE+=(-f "$path/docker/docker-compose.yml")
 
@@ -133,7 +133,7 @@ elif [ "$1" == "reload" ]; then
         container_is_not_running
     fi
 
-# Pass unknown commands to the "docker-compose" binary...
+# Pass unknown commands to the "docker compose" binary...
 else
     ARGS+=("$@")
 fi

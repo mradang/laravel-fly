@@ -40,7 +40,7 @@ _build() {
     sed -i "s|CODE_VOLUME=.*|CODE_VOLUME=${server_dir}/www/serve|" .env
 
     # 构建镜像
-    docker-compose build
+    docker compose build
     docker image prune -f
 
     # 导出镜像
@@ -63,7 +63,7 @@ _build() {
     rm /tmp/$KEY -rf
 
     # 启动
-    ssh -p $PORT $USER@$HOST "cd $server_dir/www/serve/docker; docker-compose stop; docker-compose up -d"
+    ssh -p $PORT $USER@$HOST "cd $server_dir/www/serve/docker; docker compose stop; docker compose up -d"
     ssh -p $PORT $USER@$HOST "docker image prune -f"
 
     echo "$configName 已构建"

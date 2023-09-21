@@ -17,7 +17,7 @@ fi
 source $configFile
 
 # 检查容器是否运行
-DOCKER_COMPOSE=(docker-compose)
+DOCKER_COMPOSE=(docker compose)
 DOCKER_COMPOSE+=(-f "$path/../docker/docker-compose.yml")
 if [ -z "$("${DOCKER_COMPOSE[@]}" ps -q)" ]; then
     echo "容器未运行，请使用以下命令运行容器：'fly up' or 'fly up -d'" >&2
@@ -34,7 +34,7 @@ sed -i 's/^\(DB_DATABASE=.*\)_new$/\1/' .env
 scp -P $PORT /tmp/$project.struct.json $USER@$HOST:/home/$USER/$KEY/www/serve/mysql.base_struct.json
 
 # 远程库比较
-docker_php="docker-compose exec php /usr/local/bin/php"
+docker_php="docker compose exec php /usr/local/bin/php"
 struct_file=/var/www/html/mysql.base_struct.json
 ssh -p $PORT $USER@$HOST "cd /home/$USER/$KEY/www/serve/docker; $docker_php artisan fly:mysqldiff --baseStructFile=$struct_file"
 

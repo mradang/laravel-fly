@@ -15,7 +15,7 @@ fi
 source $configFile
 
 # 检查容器是否运行
-DOCKER_COMPOSE=(docker-compose)
+DOCKER_COMPOSE=(docker compose)
 DOCKER_COMPOSE+=(-f "$path/../docker/docker-compose.yml")
 if [ -z "$("${DOCKER_COMPOSE[@]}" ps -q)" ]; then
     echo "容器未运行，请使用以下命令运行容器：'fly up' or 'fly up -d'" >&2
@@ -25,7 +25,7 @@ fi
 # 备份
 baseFileName=$KEY\_$configName\_$(date "+%Y%m%d%H%M%S")
 sqlFile=/tmp/$baseFileName.sql
-docker_exec="cd /home/$USER/$KEY/www/serve/docker; docker-compose exec"
+docker_exec="cd /home/$USER/$KEY/www/serve/docker; docker compose exec"
 ssh -p $PORT $USER@$HOST "$docker_exec mysql mysqldump app > $sqlFile"
 
 # 打包下载

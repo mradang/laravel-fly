@@ -6,7 +6,7 @@ project=$(basename $(dirname $path))
 cd $path/../
 
 # 检查容器是否运行
-DOCKER_COMPOSE=(docker-compose)
+DOCKER_COMPOSE=(docker compose)
 DOCKER_COMPOSE+=(-f "$path/../docker/docker-compose.yml")
 if [ -z "$("${DOCKER_COMPOSE[@]}" ps -q)" ]; then
     echo "容器未运行，请使用以下命令运行容器：'fly up' or 'fly up -d'" >&2
