@@ -60,6 +60,7 @@ _build() {
     scp -P $PORT -r /tmp/$KEY/docker/ $USER@$HOST:$server_dir/www/serve
 
     # 清理本地 docker 临时目录
+    cd /tmp
     rm /tmp/$KEY -rf
 
     # 启动
