@@ -27,7 +27,6 @@ class LaravelFlyServiceProvider extends ServiceProvider
             $this->publishes([
                 \dirname(__DIR__) . '/publishes/docker/' => base_path('docker'),
             ], 'docker');
-
         }
 
         $this->registerCommands();
@@ -64,7 +63,10 @@ class LaravelFlyServiceProvider extends ServiceProvider
             $duration = $this->formatDuration($query->time / 1000);
 
             if (count($bindings) > 0) {
-                $realSql = vsprintf($sqlWithPlaceholders, array_map([$pdo, 'quote'], $bindings));
+                $realSql = vsprintf($sqlWithPlaceholders, array_map(
+                    static fn($binding) => $binding === null ? 'NULL' : $pdo->quote($binding),
+                    $bindings
+                ));
             }
 
             Log::channel(config('fly.sql_log_channel') ?: config('logging.default'))
