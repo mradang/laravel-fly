@@ -13,19 +13,19 @@ class LaravelFlyServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             // 配置文件
             $this->publishes([
-                \dirname(__DIR__) . '/config/fly.php' => config_path('fly.php'),
+                \dirname(__DIR__).'/config/fly.php' => config_path('fly.php'),
             ], 'config');
             // 快捷脚本
             $this->publishes([
-                \dirname(__DIR__) . '/publishes/shortcut/' => base_path(),
+                \dirname(__DIR__).'/publishes/shortcut/' => base_path(),
             ], 'shortcut');
             // 运维脚本
             $this->publishes([
-                \dirname(__DIR__) . '/publishes/deploy/' => base_path('deploy'),
+                \dirname(__DIR__).'/publishes/deploy/' => base_path('deploy'),
             ], 'deploy');
             // docker
             $this->publishes([
-                \dirname(__DIR__) . '/publishes/docker/' => base_path('docker'),
+                \dirname(__DIR__).'/publishes/docker/' => base_path('docker'),
             ], 'docker');
         }
 
@@ -35,7 +35,7 @@ class LaravelFlyServiceProvider extends ServiceProvider
 
     public function register()
     {
-        $this->mergeConfigFrom(__DIR__ . '/../config/fly.php', 'fly');
+        $this->mergeConfigFrom(__DIR__.'/../config/fly.php', 'fly');
     }
 
     protected function registerCommands()
@@ -50,7 +50,7 @@ class LaravelFlyServiceProvider extends ServiceProvider
 
     protected function registerSqlLog()
     {
-        if (!config('fly.sql_log')) {
+        if (! config('fly.sql_log')) {
             return;
         }
 
@@ -64,7 +64,7 @@ class LaravelFlyServiceProvider extends ServiceProvider
 
             if (count($bindings) > 0) {
                 $realSql = vsprintf($sqlWithPlaceholders, array_map(
-                    static fn($binding) => $binding === null ? 'NULL' : $pdo->quote($binding),
+                    static fn ($binding) => $binding === null ? 'NULL' : $pdo->quote($binding),
                     $bindings
                 ));
             }
@@ -89,11 +89,11 @@ class LaravelFlyServiceProvider extends ServiceProvider
     private function formatDuration($seconds)
     {
         if ($seconds < 0.001) {
-            return round($seconds * 1000000) . 'μs';
+            return round($seconds * 1000000).'μs';
         } elseif ($seconds < 1) {
-            return round($seconds * 1000, 2) . 'ms';
+            return round($seconds * 1000, 2).'ms';
         }
 
-        return round($seconds, 2) . 's';
+        return round($seconds, 2).'s';
     }
 }

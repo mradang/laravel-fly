@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Log;
 
-if (!function_exists('debug')) {
+if (! function_exists('debug')) {
 
     function debug()
     {
@@ -10,13 +10,13 @@ if (!function_exists('debug')) {
 
         $stack = '';
         if (array_key_exists('file', $trace)) {
-            $stack .= ',file:' . $trace['file'];
+            $stack .= ',file:'.$trace['file'];
         }
         if (array_key_exists('line', $trace)) {
-            $stack .= ',line:' . $trace['line'];
+            $stack .= ',line:'.$trace['line'];
         }
         $stack = ltrim($stack, ',');
 
-        Log::debug($stack . "\n", func_get_args());
+        Log::debug($stack."\n", func_get_args());
     }
 }
