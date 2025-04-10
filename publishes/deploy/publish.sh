@@ -18,16 +18,9 @@ _publish() {
     source $configFile
 
     # 克隆项目
-    if [ -d /tmp/$project -a -e /tmp/$project/.git/config ]; then
-        cd /tmp/$project
-        git fetch --all
-        git reset --hard origin/master
-    else
-        rm /tmp/$project -rf
-        remote_url=$(git remote get-url origin)
-        git clone --depth=1 $remote_url /tmp/$project
-        cd /tmp/$project
-    fi
+    rm /tmp/$project -rf
+    git clone --depth=1 $path/../ /tmp/$project
+    cd /tmp/$project
 
     # 代码版本
     v=$(git rev-parse --short HEAD)
@@ -70,15 +63,12 @@ _publish() {
     sed -i "s|APP_URL=.*|APP_URL=${APP_URL}|" /tmp/$KEY.env
     sed -i "s|LOG_CHANNEL=.*|LOG_CHANNEL=daily|" /tmp/$KEY.env
     sed -i "s|DB_CONNECTION=.*|DB_CONNECTION=mysql|" /tmp/$KEY.env
-    sed -i "s|DB_HOST=.*|DB_HOST=mysql|" /tmp/$KEY.env
-    sed -i "s|DB_PORT=.*|DB_PORT=3306|" /tmp/$KEY.env
-    sed -i "s|DB_DATABASE=.*|DB_DATABASE=app|" /tmp/$KEY.env
-    sed -i "s|DB_USERNAME=.*|DB_USERNAME=root|" /tmp/$KEY.env
+    sed -i "s|# DB_HOST=.*|DB_HOST=mysql|" /tmp/$KEY.env
+    sed -i "s|# DB_PORT=.*|DB_PORT=3306|" /tmp/$KEY.env
+    sed -i "s|# DB_DATABASE=.*|DB_DATABASE=app|" /tmp/$KEY.env
+    sed -i "s|# DB_USERNAME=.*|DB_USERNAME=root|" /tmp/$KEY.env
     DB_PASSWORD=$(printf '%s\n' "$MYSQL_ROOT_PASSWORD" | sed -e 's/[\/&]/\\&/g')
-    sed -i "s|DB_PASSWORD=.*|DB_PASSWORD=${DB_PASSWORD}|" /tmp/$KEY.env
-    sed -i "s|CACHE_DRIVER=.*|CACHE_DRIVER=redis|" /tmp/$KEY.env
-    sed -i "s|QUEUE_CONNECTION=.*|QUEUE_CONNECTION=redis|" /tmp/$KEY.env
-    sed -i "s|REDIS_HOST=.*|REDIS_HOST=redis|" /tmp/$KEY.env
+    sed -i "s|# DB_PASSWORD=.*|DB_PASSWORD=${DB_PASSWORD}|" /tmp/$KEY.env
 
     echo -e '\n# --------------------------------\n' >>/tmp/$KEY.env
     cat $path/app.env.$configName >>/tmp/$KEY.env

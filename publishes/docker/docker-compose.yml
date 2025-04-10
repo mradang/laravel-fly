@@ -14,14 +14,6 @@ services:
             - "MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}"
             - "MYSQL_DATABASE=app"
 
-    redis:
-        image: redis:latest
-        restart: always
-        expose:
-            - "6379"
-        volumes:
-            - "${REDIS_DATA_VOLUME}:/data"
-
     php:
         build:
             context: ./php/
@@ -34,7 +26,6 @@ services:
             - "9000"
         depends_on:
             - mysql
-            - redis
         volumes:
             - "${CODE_VOLUME}:/var/www/html"
 

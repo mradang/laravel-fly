@@ -6,21 +6,10 @@ composer require mradang/laravel-fly -vvv
 
 ### 可选项
 
-1. 发布配置文件、快捷脚本和运维脚本
+1. 发布脚本文件和 docker 文件
 
 ```shell
 php artisan vendor:publish --provider="mradang\\LaravelFly\\LaravelFlyServiceProvider"
-```
-
-## 配置
-
-1. 添加 .env 环境变量，使用默认值时可省略
-
-```
-# 记录 SQL 日志，默认 false
-FLY_SQL_LOG=false
-# SQL 日志频道，默认使用 config('logging.default')
-FLY_SQL_LOG_CHANNEL=
 ```
 
 ## 添加的内容

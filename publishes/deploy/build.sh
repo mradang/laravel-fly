@@ -36,7 +36,6 @@ _build() {
     PASSWORD=$(printf '%s\n' "$MYSQL_ROOT_PASSWORD" | sed -e 's/[\/&]/\\&/g')
     sed -i "s|MYSQL_ROOT_PASSWORD=.*|MYSQL_ROOT_PASSWORD=${PASSWORD}|" .env
     sed -i "s|MYSQL_DATA_VOLUME=.*|MYSQL_DATA_VOLUME=${server_dir}/mysql_data|" .env
-    sed -i "s|REDIS_DATA_VOLUME=.*|REDIS_DATA_VOLUME=${server_dir}/redis_data|" .env
     sed -i "s|CODE_VOLUME=.*|CODE_VOLUME=${server_dir}/www/serve|" .env
 
     # 构建镜像
