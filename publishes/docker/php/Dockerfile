@@ -13,13 +13,13 @@ RUN echo "http://mirrors.aliyun.com/alpine/latest-stable/main/" >/etc/apk/reposi
     apk upgrade && \
     apk add gcc g++ make autoconf libzip-dev supervisor shadow && \
     docker-php-ext-install zip bcmath pdo_mysql && \
-    curl https://pecl.php.net/get/redis-5.3.7.tgz -o /tmp/redis-5.3.7.tgz && \
-    printf 'no\nno\n' | pecl install -o /tmp/redis-5.3.7.tgz && \
+    curl https://pecl.php.net/get/redis-6.2.0.tgz -o /tmp/redis-6.2.0.tgz && \
+    printf 'no\nno\n' | pecl install -o /tmp/redis-6.2.0.tgz && \
     docker-php-ext-enable redis && \
     apk del gcc g++ make autoconf && \
     rm -rf /tmp/*.tgz /var/cache/apk/* /tmp/pear/ && \
     mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini" && \
-    curl https://getcomposer.org/download/2.5.8/composer.phar -o /usr/local/bin/composer && \
+    curl https://getcomposer.org/download/2.8.8/composer.phar -o /usr/local/bin/composer && \
     chmod +x /usr/local/bin/composer && \
     chmod +x /usr/local/bin/after_publish.sh && \
     echo "* * * * * cd /var/www/html && php artisan schedule:run >> /dev/null 2>&1" >>/var/spool/cron/crontabs/www-data && \

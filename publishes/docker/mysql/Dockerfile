@@ -1,4 +1,4 @@
-FROM mysql:8.3
+FROM mysql:8.4
 
 ARG MYSQL_ROOT_PASSWORD
 
