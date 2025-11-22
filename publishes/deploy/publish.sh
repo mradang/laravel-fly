@@ -63,12 +63,12 @@ _publish() {
     sed -i "s|APP_URL=.*|APP_URL=${APP_URL}|" /tmp/$KEY.env
     sed -i "s|LOG_CHANNEL=.*|LOG_CHANNEL=daily|" /tmp/$KEY.env
     sed -i "s|DB_CONNECTION=.*|DB_CONNECTION=mysql|" /tmp/$KEY.env
-    sed -i "s|# DB_HOST=.*|DB_HOST=mysql|" /tmp/$KEY.env
-    sed -i "s|# DB_PORT=.*|DB_PORT=3306|" /tmp/$KEY.env
-    sed -i "s|# DB_DATABASE=.*|DB_DATABASE=app|" /tmp/$KEY.env
-    sed -i "s|# DB_USERNAME=.*|DB_USERNAME=root|" /tmp/$KEY.env
+    sed -i "s|DB_HOST=.*|DB_HOST=mysql|" /tmp/$KEY.env
+    sed -i "s|DB_PORT=.*|DB_PORT=3306|" /tmp/$KEY.env
+    sed -i "s|DB_DATABASE=.*|DB_DATABASE=app|" /tmp/$KEY.env
+    sed -i "s|DB_USERNAME=.*|DB_USERNAME=root|" /tmp/$KEY.env
     DB_PASSWORD=$(printf '%s\n' "$MYSQL_ROOT_PASSWORD" | sed -e 's/[\/&]/\\&/g')
-    sed -i "s|# DB_PASSWORD=.*|DB_PASSWORD=${DB_PASSWORD}|" /tmp/$KEY.env
+    sed -i "s|DB_PASSWORD=.*|DB_PASSWORD=${DB_PASSWORD}|" /tmp/$KEY.env
 
     echo -e '\n# --------------------------------\n' >>/tmp/$KEY.env
     cat $path/app.env.$configName >>/tmp/$KEY.env
